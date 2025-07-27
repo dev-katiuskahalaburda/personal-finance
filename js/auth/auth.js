@@ -13,7 +13,10 @@ window.signUpUser = async (email, password) => {
 // Inicio de sesión
 window.signInUser = async (email, password) => {
   try {
-    return await window.firebaseAuth.signInWithEmailAndPassword(email, password);
+    const userCredential = await window.firebaseAuth.signInWithEmailAndPassword(email, password);
+    // Redirigir al dashboard después de login exitoso
+    window.location.href = 'dashboard.html';
+    return userCredential;
   } catch (error) {
     console.error("[Auth] Error en login:", error);
     throw error;
@@ -32,7 +35,11 @@ window.logoutUser = async () => {
 
 // Observador de autenticación
 window.setupAuthListener = (callback) => {
-  return window.firebaseAuth.onAuthStateChanged(callback);
+  return window.firebaseAuth.onAuthStateChanged((user) => {
+    if (window.location.pathname.includes('dashboard.html') && !user) {
+      // Si no está autenticado y está en dashboard, redirigir a index
+      window.location.href = 'index.html';
+    }
+    callback(user);
+  });
 };
-
-console.log('[Auth] Módulo de autenticación cargado');
