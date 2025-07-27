@@ -26,3 +26,35 @@ window.addTransaction = async (userId, transactionData) => {
 };
 
 console.log('[Firestore] Módulo de base de datos cargado');
+
+window.getFinancialSummary = async (userId) => {
+  const snapshot = await window.firebaseDb.collection('users')
+    .doc(userId)
+    .collection('transactions')
+    .get();
+
+  const summary = { income: 0, expenses: 0, balance: 0 };
+  
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (data.type === 'income') {
+      summary.income += data.amount;
+    } else {
+      summary.expenses += data.amount;
+    }
+  });
+  
+  summary.balance = summary.income - summary.expenses;
+  return summary;
+};
+
+window.getTransactions = async (userId, limit = 5) => {
+  const querySnapshot = await window.firebaseDb.collection('users')
+    .doc(userId)
+    .collection('transactions')
+    .orderBy('date', 'desc')
+    .limit(limit)
+    .get();
+
+  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
