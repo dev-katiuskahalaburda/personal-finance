@@ -16,13 +16,40 @@ document.addEventListener('DOMContentLoaded', () => {
   if (signupForm) {
     signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = signupForm['email'].value;
-      const password = signupForm['password'].value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
       
       try {
         await window.signUpUser(email, password);
         alert('¡Registro exitoso!');
         signupForm.reset();
+      } catch (error) {
+        alert(`Error: ${error.message}`);
+      }
+    });
+  }
+
+  // Manejador de login
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      
+      try {
+        await window.signInUser(email, password);
+        alert('¡Inicio de sesión exitoso!');
+      } catch (error) {
+        alert(`Error: ${error.message}`);
+      }
+    });
+  }
+
+  // Manejador de logout
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await window.logoutUser();
       } catch (error) {
         alert(`Error: ${error.message}`);
       }
