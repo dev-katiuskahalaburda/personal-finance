@@ -1,56 +1,49 @@
-import { signUpUser, signInUser, logoutUser, onAuthStateChangedListener } from './auth.js';
-
-// Elementos del DOM
-const loginForm = document.getElementById('login-form');
-const signupForm = document.getElementById('signup-form');
-const logoutBtn = document.getElementById('logout-btn');
-const authView = document.getElementById('auth-view');
-const mainView = document.getElementById('main-view');
-
-// Manejar registro
-signupForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = document.getElementById('signup-email').value;
-  const password = document.getElementById('signup-password').value;
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('[App] Inicializando aplicación...');
   
-  try {
-    await signUpUser(email, password);
-    alert('Usuario registrado correctamente');
-    signupForm.reset();
-  } catch (error) {
-    console.error('Error al registrar:', error);
-    alert(error.message);
-  }
-});
-
-// Manejar inicio de sesión
-loginForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
+  // Elementos del DOM
+  const signupForm = document.getElementById('signup-form');
+  const loginForm = document.getElementById('login-form');
+  const logoutBtn = document.getElementById('logout-btn');
   
-  try {
-    await signInUser(email, password);
-  } catch (error) {
-    console.error('Error al iniciar sesión:', error);
-    alert(error.message);
+  // Verificar carga de Firebase
+  if (!window.firebaseAuth) {
+    console.error('[App] Error: Firebase no está disponible');
+    return;
   }
-});
 
-// Manejar cierre de sesión
-logoutBtn.addEventListener('click', () => {
-  logoutUser();
-});
-
-// Observar cambios en la autenticación
-onAuthStateChangedListener((user) => {
-  if (user) {
-    console.log('Usuario autenticado:', user.email);
-    authView.classList.add('hidden');
-    mainView.classList.remove('hidden');
-  } else {
-    console.log('No hay usuario autenticado');
-    authView.classList.remove('hidden');
-    mainView.classList.add('hidden');
+  // Manejador de registro
+  if (signupForm) {
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = signupForm['email'].value;
+      const password = signupForm['password'].value;
+      
+      try {
+        await window.signUpUser(email, password);
+        alert('¡Registro exitoso!');
+        signupForm.reset();
+      } catch (error) {
+        alert(`Error: ${error.message}`);
+      }
+    });
   }
+
+  // Configurar observador de autenticación
+  window.setupAuthListener((user) => {
+    const authView = document.getElementById('auth-view');
+    const mainView = document.getElementById('main-view');
+    
+    if (user) {
+      console.log('[App] Usuario autenticado:', user.email);
+      authView?.classList.add('hidden');
+      mainView?.classList.remove('hidden');
+    } else {
+      console.log('[App] No hay usuario autenticado');
+      authView?.classList.remove('hidden');
+      mainView?.classList.add('hidden');
+    }
+  });
+
+  console.log('[App] Aplicación inicializada correctamente');
 });

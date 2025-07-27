@@ -1,58 +1,28 @@
-import { 
-  doc,
-  setDoc,
-  getDoc,
-  collection,
-  addDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-import { db } from './config.js';
-
-/**
- * Crea un perfil de usuario en Firestore
- * @param {string} userId 
- * @param {object} userData 
- * @returns {Promise<void>}
- */
-export const createUserProfile = async (userId, userData) => {
+// Crear perfil de usuario
+window.createUserProfile = async (userId, userData) => {
   try {
-    await setDoc(doc(db, 'users', userId), {
+    await window.firebaseDb.collection('users').doc(userId).set({
       ...userData,
-      createdAt: serverTimestamp(),
-      lastLogin: serverTimestamp()
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      lastLogin: firebase.firestore.FieldValue.serverTimestamp()
     });
   } catch (error) {
+    console.error("[Firestore] Error creando perfil:", error);
     throw error;
   }
 };
 
-/**
- * Obtiene el perfil de un usuario
- * @param {string} userId 
- * @returns {Promise<DocumentSnapshot>}
- */
-export const getUserProfile = async (userId) => {
+// Añadir transacción
+window.addTransaction = async (userId, transactionData) => {
   try {
-    return await getDoc(doc(db, 'users', userId));
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
- * Añade una nueva transacción financiera
- * @param {string} userId 
- * @param {object} transactionData 
- * @returns {Promise<DocumentReference>}
- */
-export const addTransaction = async (userId, transactionData) => {
-  try {
-    return await addDoc(collection(db, 'users', userId, 'transactions'), {
+    return await window.firebaseDb.collection('users').doc(userId).collection('transactions').add({
       ...transactionData,
-      date: serverTimestamp()
+      date: firebase.firestore.FieldValue.serverTimestamp()
     });
   } catch (error) {
+    console.error("[Firestore] Error añadiendo transacción:", error);
     throw error;
   }
 };
+
+console.log('[Firestore] Módulo de base de datos cargado');
