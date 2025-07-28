@@ -46,48 +46,28 @@ if (authChecked) return;
 async function initializeDashboard(userId) {
   console.log('Inicializando dashboard para usuario:', userId);
   
-  // Debug: Verificar funciones disponibles
-  console.log('Funciones disponibles:', {
-    loadFinancialData: typeof window.loadFinancialData,
-    getFinancialSummary: typeof window.getFinancialSummary,
-    getTransactions: typeof window.getTransactions,
-    firebaseDb: typeof window.firebaseDb
-  });
-
-  try {
-    // Verificación exhaustiva de dependencias
-    if (typeof window.loadFinancialData !== 'function') {
-      throw new Error('loadFinancialData no está definida');
-    }
-    
-    if (typeof window.firebaseDb === 'undefined') {
-      throw new Error('Firebase Firestore no está inicializado');
-    }
-
-    console.log('Cargando datos financieros...');
-    await window.loadFinancialData(userId);
-    console.log('Datos financieros cargados exitosamente');
-    
-    // Configurar manejadores de eventos
-    setupEventHandlers(userId);
-    
-  } catch (error) {
-    console.error('Error al inicializar dashboard:', {
-      error: error.message,
-      stack: error.stack
-    });
-    
-    // Mostrar error al usuario de forma más amigable
-    const errorMessage = document.createElement('div');
-    errorMessage.className = 'error-message';
-    errorMessage.innerHTML = `
-      <h3>Error al cargar el dashboard</h3>
-      <p>${error.message}</p>
-      <p>Intenta recargar la página o contactar al soporte.</p>
-    `;
-    
-    document.getElementById('dashboard-view')?.prepend(errorMessage);
+  // Verificar que las funciones necesarias existen
+  const requiredFunctions = [
+    'loadFinancialData',
+    'getFinancialSummary',
+    'getTransactions',
+    'addTransaction'
+  ];
+  
+  const missingFunctions = requiredFunctions.filter(fn => typeof window[fn] !== 'function');
+  
+  if (missingFunctions.length > 0) {
+    throw new Error(`Funciones faltantes: ${missingFunctions.join(', ')}`);
   }
+  
+  // Cargar datos financieros
+  await window.loadFinancialData(userId);
+  
+  // Configurar manejadores de eventos
+  setupEventHandlers(userId);
+  
+  // Mostrar el dashboard (por si estaba oculto)
+  document.getElementById('dashboard-view').style.display = 'block';
 }
 
 function setupEventHandlers(userId) {

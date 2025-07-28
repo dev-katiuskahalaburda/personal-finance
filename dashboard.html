@@ -44,7 +44,23 @@
 
 <section class="transaction-section">
   <h2>Transacciones Recientes</h2>
-  <div id="transactions-list"></div>
+  <div id="transactions-list" class="transactions-list"></div>
+</section>
+
+<!-- Agregar el formulario de transacciones que se referencia en app.js -->
+<section class="transaction-form-container">
+  <h2>Agregar Transacción</h2>
+  <form id="transaction-form" class="transaction-form">
+    <input type="number" name="amount" placeholder="Monto" step="0.01" required>
+    <input type="text" name="description" placeholder="Descripción" required>
+    <select name="type" required>
+      <option value="">Seleccione tipo</option>
+      <option value="income">Ingreso</option>
+      <option value="expense">Gasto</option>
+    </select>
+    <input type="text" name="category" placeholder="Categoría">
+    <button type="submit">Agregar Transacción</button>
+  </form>
 </section>
     </main>
   </div>
