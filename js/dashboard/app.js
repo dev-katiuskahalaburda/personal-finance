@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Dashboard inicializado');
   
-  // Verificar Firebase
+  // Verificación robusta de Firebase
   if (!window.firebase || !window.firebaseAuth) {
     console.error('Firebase no está disponible');
     setTimeout(() => {
@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
     return;
   }
+
   // Observador de autenticación
   window.setupAuthListener((user) => {
     if (user) {
@@ -29,30 +30,77 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Función separada para inicializar el dashboard
+// Función mejorada para inicializar el dashboard
 async function initializeDashboard(userId) {
+  console.log('Inicializando dashboard para usuario:', userId);
   
+  // Debug: Verificar funciones disponibles
+  console.log('Funciones disponibles:', {
+    loadFinancialData: typeof window.loadFinancialData,
+    getFinancialSummary: typeof window.getFinancialSummary,
+    getTransactions: typeof window.getTransactions,
+    firebaseDb: typeof window.firebaseDb
+  });
+
   try {
-    // Verificar si la función existe
-    if (typeof window.loadFinancialData === 'function') {
-      await window.loadFinancialData(userId);
-    } else {
+    // Verificación exhaustiva de dependencias
+    if (typeof window.loadFinancialData !== 'function') {
       throw new Error('loadFinancialData no está definida');
     }
     
-    // Configurar otros manejadores de eventos...
+    if (typeof window.firebaseDb === 'undefined') {
+      throw new Error('Firebase Firestore no está inicializado');
+    }
+
+    console.log('Cargando datos financieros...');
+    await window.loadFinancialData(userId);
+    console.log('Datos financieros cargados exitosamente');
+    
+    // Configurar manejadores de eventos
     setupEventHandlers(userId);
     
   } catch (error) {
-    console.error('Error al inicializar dashboard:', error);
-    alert('Error al cargar el dashboard');
+    console.error('Error al inicializar dashboard:', {
+      error: error.message,
+      stack: error.stack
+    });
+    
+    // Mostrar error al usuario de forma más amigable
+    const errorMessage = document.createElement('div');
+    errorMessage.className = 'error-message';
+    errorMessage.innerHTML = `
+      <h3>Error al cargar el dashboard</h3>
+      <p>${error.message}</p>
+      <p>Intenta recargar la página o contactar al soporte.</p>
+    `;
+    
+    document.getElementById('dashboard-view')?.prepend(errorMessage);
   }
 }
 
 function setupEventHandlers(userId) {
-  // Manejador para el formulario de transacciones
+  console.log('Configurando manejadores de eventos para:', userId);
+  
+  // Manejador para el formulario de transacciones (si existe)
   document.getElementById('transaction-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    // ... lógica para agregar transacción
+    
+    try {
+      const formData = new FormData(e.target);
+      const transactionData = {
+        amount: parseFloat(formData.get('amount')),
+        description: formData.get('description'),
+        type: formData.get('type'),
+        category: formData.get('category')
+      };
+      
+      console.log('Agregando transacción:', transactionData);
+      await window.addTransaction(userId, transactionData);
+      await window.loadFinancialData(userId); // Refrescar datos
+      e.target.reset();
+      
+    } catch (error) {
+      console.error('Error al agregar transacción:', error);
+    }
   });
 }
