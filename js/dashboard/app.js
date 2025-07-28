@@ -15,18 +15,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let authChecked = false;
   window.setupAuthListener((user) => {
 if (authChecked) return;
-    authChecked = true;
-    
-    if (user) {
-      console.log('Usuario autenticado:', user.email);
-      initializeDashboard(user.uid);
+  authChecked = true;
+  
+  if (user) {
+    console.log('Usuario autenticado:', user.email);
+    if (window.location.pathname.includes('index.html')) {
+      window.location.href = 'dashboard.html';
     } else {
-      console.log('Usuario no autenticado');
-      // Solo redirigir si no estamos en index.html
-      if (!window.location.pathname.includes('index.html')) {
-        setTimeout(() => window.location.href = 'index.html', 500);
-      }
+      initializeDashboard(user.uid);
     }
+  } else {
+    console.log('Usuario no autenticado');
+    if (!window.location.pathname.includes('index.html')) {
+      window.location.href = 'index.html';
+    }
+  }
   });
 
   // Manejador de logout

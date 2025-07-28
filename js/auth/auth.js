@@ -36,12 +36,6 @@ window.logoutUser = async () => {
 // Observador de autenticación
 window.setupAuthListener = (callback) => {
   return window.firebaseAuth.onAuthStateChanged((user) => {
-    // Solo actuar si hay un cambio real de estado
-    if (user && window.location.pathname.includes('index.html')) {
-      window.location.href = 'dashboard.html';
-    } else if (!user && window.location.pathname.includes('dashboard.html')) {
-      window.location.href = 'index.html';
-    }
     callback(user);
   });
 };
