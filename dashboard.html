@@ -13,9 +13,10 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <!-- Scripts del dashboard -->
   <script src="js/auth/config.js"></script>
-  <script src="js/firebase/firestore.js"></script>
-  <script src="js/dashboard/finance.js"></script>
+  <script src="js/auth/firestore.js"></script>
   <script src="js/dashboard/app.js"></script>
+  <script src="js/dashboard/finance.js"></script>
+
 </head>
 <body>
   <div id="dashboard-view">
@@ -27,12 +28,24 @@
     <main>
       <!-- Contenido del dashboard aquí -->
       <section class="summary-cards">
-        <!-- Tarjetas de resumen -->
-      </section>
-      
-      <section class="transaction-section">
-        <!-- Formulario y lista de transacciones -->
-      </section>
+  <div class="card">
+    <h3>Balance Total</h3>
+    <p id="total-balance">$0.00</p>
+  </div>
+  <div class="card">
+    <h3>Ingresos</h3>
+    <p id="total-income">$0.00</p>
+  </div>
+  <div class="card">
+    <h3>Gastos</h3>
+    <p id="total-expenses">$0.00</p>
+  </div>
+</section>
+
+<section class="transaction-section">
+  <h2>Transacciones Recientes</h2>
+  <div id="transactions-list"></div>
+</section>
     </main>
   </div>
 </body>

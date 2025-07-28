@@ -2,12 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Dashboard inicializado');
   
   // Verificar Firebase
-  if (!window.firebaseAuth) {
+  if (!window.firebase || !window.firebaseAuth) {
     console.error('Firebase no está disponible');
-    window.location.href = 'index.html';
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 1000);
     return;
   }
-
   // Observador de autenticación
   window.setupAuthListener((user) => {
     if (user) {
@@ -30,6 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Función separada para inicializar el dashboard
 async function initializeDashboard(userId) {
+  console.log('Inicializando dashboard para usuario:', userId);
+  console.log('Funciones disponibles:', {
+  loadFinancialData: typeof window.loadFinancialData,
+  getFinancialSummary: typeof window.getFinancialSummary,
+  getTransactions: typeof window.getTransactions
   try {
     // Verificar si la función existe
     if (typeof window.loadFinancialData === 'function') {
