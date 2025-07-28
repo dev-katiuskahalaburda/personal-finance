@@ -4,19 +4,28 @@ document.addEventListener('DOMContentLoaded', () => {
   // Verificación robusta de Firebase
   if (!window.firebase || !window.firebaseAuth) {
     console.error('Firebase no está disponible');
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 1000);
+// Redirigir solo si no estamos ya en index.html
+    if (!window.location.pathname.includes('index.html')) {
+      setTimeout(() => window.location.href = 'index.html', 1000);
+    }
     return;
   }
 
   // Observador de autenticación
+    let authChecked = false;
   window.setupAuthListener((user) => {
+if (authChecked) return;
+    authChecked = true;
+    
     if (user) {
       console.log('Usuario autenticado:', user.email);
       initializeDashboard(user.uid);
     } else {
-      window.location.href = 'index.html';
+      console.log('Usuario no autenticado');
+      // Solo redirigir si no estamos en index.html
+      if (!window.location.pathname.includes('index.html')) {
+        setTimeout(() => window.location.href = 'index.html', 500);
+      }
     }
   });
 
