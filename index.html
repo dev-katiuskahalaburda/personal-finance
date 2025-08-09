@@ -34,21 +34,7 @@
       }
     });
 
-    // Manejar formulario de registro
-    document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('signup-email').value;
-      const password = document.getElementById('signup-password').value;
-      
-      try {
-        await window.signUpUser(email, password);
-        alert('Registro exitoso! Por favor inicia sesión.');
-        document.getElementById('signup-form').reset();
-      } catch (error) {
-        console.error('Error en registro:', error);
-        alert(error.message);
-      }
-    });
+ 
   });
 </script>
 </head>
@@ -66,14 +52,7 @@
       </form>
     </div>
     
-    <div class="auth-form">
-      <h2>Registrarse</h2>
-      <form id="signup-form">
-        <input type="email" id="signup-email" placeholder="Correo electrónico" required>
-        <input type="password" id="signup-password" placeholder="Contraseña" required>
-        <button type="submit">Crear cuenta</button>
-      </form>
-    </div>
+   
   </div>
   
 
