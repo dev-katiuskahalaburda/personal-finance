@@ -20,19 +20,7 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Manejar formulario de login
-    document.getElementById('login-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-      
-      try {
-        await window.signInUser(email, password);
-      } catch (error) {
-        console.error('Error en login:', error);
-        alert(error.message);
-      }
-    });
+   
 
     // Manejar formulario de registro
     document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
@@ -56,14 +44,7 @@
   <div id="auth-view">
     <h1>App de Finanzas Personales</h1>
     
-    <div class="auth-form">
-      <h2>Iniciar Sesión</h2>
-      <form id="login-form">
-        <input type="email" id="login-email" placeholder="Correo electrónico" required>
-        <input type="password" id="login-password" placeholder="Contraseña" required>
-        <button type="submit">Ingresar</button>
-      </form>
-    </div>
+    
     
     <div class="auth-form">
       <h2>Registrarse</h2>
@@ -74,9 +55,5 @@
       </form>
     </div>
   </div>
-  
-<a href="register.html">registrame porfa</a>
-
 </body>
 </html>
-
