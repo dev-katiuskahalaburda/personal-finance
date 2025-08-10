@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Finanzas Personales - Login</title>
+  <title>Finanzas Personales - Registro</title>
   <link rel="stylesheet" href="./css/styles.css">
   <link rel="icon" href="data:,">
   <!-- Firebase SDK (versión compat) -->
@@ -17,23 +17,25 @@
   <!-- <script src="./js/dashboard/app.js"></script> -->
 
 
-  <script>
+   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Manejar formulario de login
-    document.getElementById('login-form')?.addEventListener('submit', async (e) => {
+   
+
+    // Manejar formulario de registro
+    document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
       
       try {
-        await window.signInUser(email, password);
+        await window.signUpUser(email, password);
+        alert('Registro exitoso! Por favor inicia sesión.');
+        document.getElementById('signup-form').reset();
       } catch (error) {
-        console.error('Error en login:', error);
+        console.error('Error en registro:', error);
         alert(error.message);
       }
     });
-
- 
   });
 </script>
 </head>
@@ -54,18 +56,18 @@
     <main id="login-container">
         <h2>INICIO DE SESIÓN</h2>
 
-        <form id="login-form">
-            <label for="login-email">Correo</label>
-            <input type="email" id="login-email" placeholder="hola@mail.com" required>
+        <form id="signup-form">
+            <label for="signup-email">Correo</label>
+            <input type="email" id="signup-email" placeholder="hola@mail.com" required>
 
-            <label for="login-password">Contraseña</label>
-            <input type="password" id="login-password" placeholder="Contraseña" required>
+            <label for="signup-password">Contraseña</label>
+            <input type="password" id="signup-password" placeholder="Contraseña" required>
 
             <button type="submit">Subir</button>
         </form>
 
         <p class="register-text">
-            ¿No tienes cuenta? <a href="register2.html">REGISTRARSE</a>
+            ¿Ya tienes cuenta? <a href="index.html">INICIAR SESIÓN</a>
         </p>
     </main>
 
