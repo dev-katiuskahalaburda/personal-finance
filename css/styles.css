@@ -74,7 +74,7 @@ body {
     margin-bottom: 20px;
 }
 
-/* Formulario */
+/* Formulario LOGIN*/
 #login-form {
     display: flex;
     flex-direction: column;
@@ -105,6 +105,39 @@ body {
 }
 
 #login-form button:hover {
+    background-color: #1a0a55;
+}
+/* Formulario REGISTRO*/
+#signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: left;
+}
+
+#signup-form label {
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+#signup-form input {
+    padding: 12px;
+    border: none;
+    background-color: white;
+    font-size: 0.95rem;
+}
+
+#signup-form button {
+    background-color: #0b0333;
+    color: white;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#singup-form button:hover {
     background-color: #1a0a55;
 }
 
