@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Finanzas Personales - Login</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="./css/styles.css">
   <link rel="icon" href="data:,">
   <!-- Firebase SDK (versión compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -39,23 +38,42 @@
 </script>
 </head>
 <body>
-  <div id="auth-view">
-    <h1>Smart Spend - Finanzas Personales</h1>
-    
-    <div class="auth-form">
-      <h2>Iniciar Sesión</h2>
-      <form id="login-form">
-        <input type="email" id="login-email" placeholder="Correo electrónico" required>
-        <input type="password" id="login-password" placeholder="Contraseña" required>
-        <button type="submit">Ingresar</button>
-      </form>
-    </div>
-    <p>No tienes cuenta? </p><a href="register.html">Registrarse</a>
-   
-  </div>
-  
 
+    <!-- Hero -->
+    <header class="hero">
+        <div class="logo">
+            <img src="img/logo.png" alt="Logo Smart Spend">
+        </div>
+        <div class="hero-text">
+            <h1>Smart Spend</h1>
+            <p>Smart Spend es una aplicación web para Finanzas personales</p>
+        </div>
+    </header>
+
+    <!-- Formulario -->
+    <main id="login-container">
+        <h2>INICIO DE SESIÓN</h2>
+
+        <form id="login-form">
+            <label for="login-email">Correo</label>
+            <input type="email" id="login-email" placeholder="hola@mail.com" required>
+
+            <label for="login-password">Contraseña</label>
+            <input type="password" id="login-password" placeholder="Contraseña" required>
+
+            <button type="submit">Subir</button>
+        </form>
+
+        <p class="register-text">
+            ¿No tienes cuenta? <a href="register.html">REGISTRARSE</a>
+        </p>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>Colegio Heaven's Kingdom Christian School</p>
+        <p>© 2025 3ER AÑO BTI.</p>
+    </footer>
 
 </body>
 </html>
-

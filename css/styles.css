@@ -1,45 +1,135 @@
-/* ===== ESTILOS GLOBALES ===== */
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* inicio de styles.css */
+html, body {
+    height: 100%;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Usa toda la altura visible */
 }
 
-.hidden {
-  display: none;
+/* Contenedor principal que crece para empujar el footer */
+main {
+    flex: 1;
 }
 
-/* ===== ESTILOS COMPARTIDOS ===== */
-input {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  box-sizing: border-box;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+
+/* Fuente y fondo general */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #d9c6dc; /* Morado claro como en la captura */
+    color: #000;
 }
 
-button {
-  background-color: #f49842;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
+/* Hero (logo + título) */
+.hero {
+    background-color: #0b0333; /* Azul muy oscuro de la cabecera */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    text-align: center;
+    flex-wrap: wrap;
 }
 
-button:hover {
-  background-color: #dba527;
+.hero .logo img {
+    width: 120px;
+    margin-bottom: 10px;
 }
 
-#logout-btn {
-  background-color: #db4437;
-  width: auto;
+.hero-text {
+    color: #eee;
+    margin-left: 20px;
 }
 
-#logout-btn:hover {
-  background-color: #c1351d;
+.hero-text h1 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.hero-text p {
+    font-size: 0.9rem;
+    color: #c7c7c7;
+}
+
+/* Contenedor del login */
+#login-container {
+ 
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+#login-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* Formulario */
+#login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: left;
+}
+
+#login-form label {
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+#login-form input {
+    padding: 12px;
+    border: none;
+    background-color: white;
+    font-size: 0.95rem;
+}
+
+#login-form button {
+    background-color: #0b0333;
+    color: white;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#login-form button:hover {
+    background-color: #1a0a55;
+}
+
+/* Texto registro */
+.register-text {
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.register-text a {
+    color: blue;
+    text-decoration: underline;
+}
+
+/* Footer */
+footer {
+    background-color: #0b0333;
+    color: white;
+    text-align: center;
+    padding: 15px 10px;
+    font-size: 0.85rem;
+    /* margin-top: 20px;  Elimina este margen */
+    width: 100%;
+}
+
+footer p {
+    margin: 5px 0;
 }
