@@ -1,0 +1,193 @@
+/* Reset y Variables */
+:root {
+    --primary: #0b0333;
+    --secondary: #1a0a55;
+    --accent: #6a5acd;
+    --text: #333;
+    --text-light: #fff;
+    --bg: #f5f5f7;
+    --card-bg: #fff;
+    --income: #4caf50;
+    --expense: #f44336;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* Estructura Full-Screen */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bg);
+}
+
+.header {
+    background-color: var(--primary);
+    color: var(--text-light);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* centrado */
+    gap: 1rem; /* espacio entre logo y título */
+    width: 100%;
+}
+
+.logo {
+    height: 40px;
+}
+
+.main-layout {
+    display: flex;
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+    flex: 1;
+    background-color: var(--primary);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: flex-start; /* ahora pegada a la izquierda */
+    gap: 2vw;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.nav-btn:hover, .nav-btn.active {
+    background-color: var(--secondary);
+}
+
+.nav-btn i {
+    font-size: 1.1rem;
+}
+
+.logout {
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Main Content */
+.main-content {
+    flex: 3; /* proporción 3 */
+    padding: 1.5rem;
+}
+
+.dashboard-grid {
+    display: flex;
+    flex-direction: column; /* tarjetas en vertical */
+    gap: 3vh; /* espacio proporcional */
+}
+
+/* Cards */
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 1rem 1.5rem;
+    background-color: var(--primary);
+    color: var(--text-light);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+h1, h2 {
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 1.5rem;
+}
+
+h2 {
+    font-size: 1.2rem;
+}
+
+.amount {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+}
+
+.positive {
+    color: var(--income);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.income .value {
+    color: var(--income);
+}
+
+.expense .value {
+    color: var(--expense);
+}
+
+.empty-state {
+    color: #999;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column;
+    }
+
+ .sidebar {
+        width: 100%;
+        flex-direction: column; /* columna */
+        align-items: center; /* centrados horizontalmente */
+        padding: 1rem;
+        gap: 1rem;
+        overflow-x: visible; /* sin scroll horizontal */
+    }
+    .nav-btn {
+        width: 80%; /* ancho uniforme */
+        justify-content: center;
+        flex-direction: row; /* icono + texto en fila */
+    }
+
+    .logout {
+        margin-top: 0;
+        margin-left: auto;
+    }
+}
