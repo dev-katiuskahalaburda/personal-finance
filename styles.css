@@ -44,7 +44,7 @@ body {
 }
 
 /* Contenedor del login */
-.login-container {
+#login-container {
     background-color: #d9c6dc; /* Igual que el fondo general */
     max-width: 500px;
     margin: 30px auto;
@@ -52,32 +52,32 @@ body {
     text-align: center;
 }
 
-.login-container h2 {
+#login-container h2 {
     font-size: 1.5rem;
     margin-bottom: 20px;
 }
 
 /* Formulario */
-.login-form {
+#login-form {
     display: flex;
     flex-direction: column;
     gap: 10px;
     text-align: left;
 }
 
-.login-form label {
+#login-form label {
     font-weight: bold;
     font-size: 0.95rem;
 }
 
-.login-form input {
+#login-form input {
     padding: 12px;
     border: none;
     background-color: white;
     font-size: 0.95rem;
 }
 
-.login-form button {
+#login-form button {
     background-color: #0b0333;
     color: white;
     padding: 12px;
@@ -87,7 +87,7 @@ body {
     margin-top: 10px;
 }
 
-.login-form button:hover {
+#login-form button:hover {
     background-color: #1a0a55;
 }
 
