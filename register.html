@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Finanzas Personales - Login</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/auth.css">
+  <title>Finanzas Personales - Registro</title>
+  <link rel="stylesheet" href="./css/styles.css">
   <link rel="icon" href="data:,">
   <!-- Firebase SDK (versión compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -18,7 +17,7 @@
   <!-- <script src="./js/dashboard/app.js"></script> -->
 
 
-  <script>
+   <script>
   document.addEventListener('DOMContentLoaded', () => {
    
 
@@ -41,17 +40,42 @@
 </script>
 </head>
 <body>
-  <div id="auth-view">
-    <h1>Smart Spend - Finanzas Personales</h1>
-        
-    <div class="auth-form">
-      <h2>Registro</h2>
-      <form id="signup-form">
-        <input type="email" id="signup-email" placeholder="Correo electrónico" required>
-        <input type="password" id="signup-password" placeholder="Contraseña" required>
-        <button type="submit">Crear cuenta</button>
-      </form>
-    </div>
-  </div>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="logo">
+            <img src="img/logo.png" alt="Logo Smart Spend">
+        </div>
+        <div class="hero-text">
+            <h1>Smart Spend</h1>
+            <p>Smart Spend es una aplicación web para Finanzas personales</p>
+        </div>
+    </header>
+
+    <!-- Formulario -->
+    <main id="login-container">
+        <h2>REGISTRO</h2>
+
+        <form id="signup-form">
+            <label for="signup-email">Correo</label>
+            <input type="email" id="signup-email" placeholder="hola@mail.com" required>
+
+            <label for="signup-password">Contraseña</label>
+            <input type="password" id="signup-password" placeholder="Contraseña" required>
+
+            <button type="submit">Subir</button>
+        </form>
+
+        <p class="register-text">
+            ¿Ya tienes cuenta? <a href="index.html">INICIAR SESIÓN</a>
+        </p>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>Colegio Heaven's Kingdom Christian School</p>
+        <p>© 2025 3ER AÑO BTI.</p>
+    </footer>
+
 </body>
 </html>

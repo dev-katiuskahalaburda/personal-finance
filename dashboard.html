@@ -1,69 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Dashboard Financiero</title>
-  <link rel="stylesheet" href="css/styles-dashboard.css">
-  <link rel="stylesheet" href="css/dashboard.css">
-  <link rel="icon" href="data:,">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <!-- Scripts del dashboard -->
-  <script src="./js/auth/config.js"></script>
-  <script src="./js/auth/firestore.js"></script>
-  <script src="./js/dashboard/app.js"></script>
-  <script src="./js/dashboard/finance.js"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Spend - Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-  <div id="dashboard-view">
-    <header>
-      <h1>Mis Finanzas</h1>
-      <button id="logout-btn">Cerrar Sesión</button>
+
+    <!-- Cabecera -->
+    <header class="header">
+        <img src="logo.svg" alt="Logo Smart Spend" class="logo">
+        <h1>Smart Spend</h1>
     </header>
-    
-    <main>
-      <!-- Contenido del dashboard aquí -->
-      <section class="summary-cards">
-  <div class="card">
-    <h3>Balance Total</h3>
-    <p id="total-balance">$0.00</p>
-  </div>
-  <div class="card">
-    <h3>Ingresos</h3>
-    <p id="total-income">$0
-       .00</p>
-  </div>
-  <div class="card">
-    <h3>Gastos</h3>
-    <p id="total-expenses">$0.00</p>
-  </div>
-</section>
 
-<section class="transaction-section">
-  <h2>Transacciones Recientes</h2>
-  <div id="transactions-list" class="transactions-list"></div>
-</section>
+    <div class="dashboard-container">
 
-<!-- Agregar el formulario de transacciones que se referencia en app.js -->
-<section class="transaction-form-container">
-  <h2>Agregar Transacción</h2>
-  <form id="transaction-form" class="transaction-form">
-    <input type="number" name="amount" placeholder="Monto" step="0.01" required>
-    <input type="text" name="description" placeholder="Descripción" required>
-    <select name="type" required>
-      <option value="">Seleccione tipo</option>
-      <option value="income">Ingreso</option>
-      <option value="expense">Gasto</option>
-    </select>
-    <input type="text" name="category" placeholder="Categoría">
-    <button type="submit">Agregar Transacción</button>
-  </form>
-</section>
-    </main>
-  </div>
+        <!-- Menú lateral -->
+        <aside class="sidebar">
+            <button>Ver Movimientos</button>
+            <button>Ingresar Transacción</button>
+            <button class="logout">Cerrar Sesión</button>
+        </aside>
+
+        <!-- Panel principal -->
+        <main class="main-content">
+            <div class="card total">
+                <h2>Total</h2>
+                <p class="amount">1.000.000 Gs.</p>
+            </div>
+            <div class="card ingresos-gastos">
+                <div class="row">
+                    <span>INGRESOS</span>
+                    <span>1.000.000 Gs.</span>
+                </div>
+                <div class="row">
+                    <span>GASTOS</span>
+                    <span>0 Gs.</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
 </body>
 </html>

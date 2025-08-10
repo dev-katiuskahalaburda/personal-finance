@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Dashboard Financiero</title>
+  <link rel="stylesheet" href="css/styles-dashboard_old.css">
+  <link rel="stylesheet" href="css/dashboard_old.css">
+  <link rel="icon" href="data:,">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <!-- Scripts del dashboard -->
+  <script src="./js/auth/config.js"></script>
+  <script src="./js/auth/firestore.js"></script>
+  <script src="./js/dashboard/app.js"></script>
+  <script src="./js/dashboard/finance.js"></script>
+
+</head>
+<body>
+  <div id="dashboard-view">
+    <header>
+      <h1>Mis Finanzas</h1>
+      <button id="logout-btn">Cerrar Sesión</button>
+    </header>
+    
+    <main>
+      <!-- Contenido del dashboard aquí -->
+      <section class="summary-cards">
+  <div class="card">
+    <h3>Balance Total</h3>
+    <p id="total-balance">$0.00</p>
+  </div>
+  <div class="card">
+    <h3>Ingresos</h3>
+    <p id="total-income">$0
+       .00</p>
+  </div>
+  <div class="card">
+    <h3>Gastos</h3>
+    <p id="total-expenses">$0.00</p>
+  </div>
+</section>
+
+<section class="transaction-section">
+  <h2>Transacciones Recientes</h2>
+  <div id="transactions-list" class="transactions-list"></div>
+</section>
+
+<!-- Agregar el formulario de transacciones que se referencia en app.js -->
+<section class="transaction-form-container">
+  <h2>Agregar Transacción</h2>
+  <form id="transaction-form" class="transaction-form">
+    <input type="number" name="amount" placeholder="Monto" step="0.01" required>
+    <input type="text" name="description" placeholder="Descripción" required>
+    <select name="type" required>
+      <option value="">Seleccione tipo</option>
+      <option value="income">Ingreso</option>
+      <option value="expense">Gasto</option>
+    </select>
+    <input type="text" name="category" placeholder="Categoría">
+    <button type="submit">Agregar Transacción</button>
+  </form>
+</section>
+    </main>
+  </div>
+</body>
+</html>
