@@ -36,13 +36,13 @@
 .header-content {
     display: flex;
     align-items: center;
-    justify-content: center; /* Centrado horizontal */
-    gap: 1rem; /* Espacio proporcional entre logo y título */
+    justify-content: center; /* centrado */
+    gap: 1rem; /* espacio entre logo y título */
+    width: 100%;
 }
 
 .logo {
     height: 40px;
-    margin-right: 15px;
 }
 
 .main-layout {
@@ -55,12 +55,12 @@
 
 /* Sidebar */
 .sidebar {
-    width: 100%;
+    flex: 1; /* proporción 1 */
     background-color: var(--primary);
     padding: 1.5rem;
     display: flex;
-    justify-content: center; /* Centrado horizontal */
-    gap: 2vw; /* Espaciado proporcional entre botones */
+    justify-content: center;
+    gap: 2vw; /* espacio proporcional */
     flex-wrap: wrap;
 }
 
@@ -86,20 +86,19 @@
 }
 
 .logout {
-    margin-top: auto;
     background-color: rgba(255,255,255,0.1);
 }
 
 /* Main Content */
 .main-content {
-    flex: 1;
+    flex: 3; /* proporción 3 */
     padding: 1.5rem;
 }
 
 .dashboard-grid {
     display: flex;
-    flex-direction: column; /* Vertical */
-    gap: 3vh; /* Espacio proporcional entre tarjetas */
+    flex-direction: column; /* tarjetas en vertical */
+    gap: 3vh; /* espacio proporcional */
 }
 
 /* Cards */
@@ -120,7 +119,6 @@
     padding: 1.5rem;
 }
 
-/* Tipografías y detalles */
 h1, h2 {
     font-weight: 600;
 }
@@ -188,18 +186,8 @@ h2 {
         font-size: 0.8rem;
     }
 
-    .nav-btn span {
-        display: none;
-    }
-
     .logout {
         margin-top: 0;
         margin-left: auto;
-    }
-}
-
-@media (max-width: 480px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr;
     }
 }
