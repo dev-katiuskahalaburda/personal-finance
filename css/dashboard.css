@@ -36,9 +36,8 @@
 .header-content {
     display: flex;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+    justify-content: center; /* Centrado horizontal */
+    gap: 1rem; /* Espacio proporcional entre logo y título */
 }
 
 .logo {
@@ -56,26 +55,25 @@
 
 /* Sidebar */
 .sidebar {
-    width: 250px;
+    width: 100%;
     background-color: var(--primary);
     padding: 1.5rem;
     display: flex;
-    flex-direction: column;
+    justify-content: center; /* Centrado horizontal */
+    gap: 2vw; /* Espaciado proporcional entre botones */
+    flex-wrap: wrap;
 }
 
 .nav-btn {
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 12px 15px;
-    margin-bottom: 10px;
+    gap: 0.5rem;
+    padding: 12px 18px;
     border: none;
     border-radius: 8px;
     background: transparent;
     color: var(--text-light);
     cursor: pointer;
-    text-align: left;
     transition: all 0.3s;
 }
 
@@ -99,9 +97,9 @@
 }
 
 .dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+    display: flex;
+    flex-direction: column; /* Vertical */
+    gap: 3vh; /* Espacio proporcional entre tarjetas */
 }
 
 /* Cards */
