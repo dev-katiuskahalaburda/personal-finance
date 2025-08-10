@@ -44,7 +44,7 @@ body {
 }
 
 /* Contenedor del login */
-#login-container {
+.login-container {
     background-color: #d9c6dc; /* Igual que el fondo general */
     max-width: 500px;
     margin: 30px auto;
@@ -52,7 +52,7 @@ body {
     text-align: center;
 }
 
-#login-container h2 {
+.login-container h2 {
     font-size: 1.5rem;
     margin-bottom: 20px;
 }
