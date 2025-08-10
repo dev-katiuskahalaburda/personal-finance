@@ -5,42 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Spend - Dashboard</title>
     <link rel="stylesheet" href="./css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-
-    <!-- Cabecera -->
-    <header class="header">
-        <img src="./img/logo.png" alt="Logo Smart Spend" class="logo">
-        <h1>Smart Spend</h1>
-    </header>
-
-    <div class="dashboard-container">
-
-        <!-- Menú lateral -->
-        <aside class="sidebar">
-            <button>Ver Movimientos</button>
-            <button>Ingresar Transacción</button>
-            <button class="logout">Cerrar Sesión</button>
-        </aside>
-
-        <!-- Panel principal -->
-        <main class="main-content">
-            <div class="card total">
-                <h2>Total</h2>
-                <p class="amount">1.000.000 Gs.</p>
+    <div class="app-container">
+        <!-- Cabecera -->
+        <header class="header">
+            <div class="header-content">
+                <img src="./img/logo.png" alt="Logo Smart Spend" class="logo">
+                <h1>Smart Spend</h1>
             </div>
-            <div class="card ingresos-gastos">
-                <div class="row">
-                    <span>INGRESOS</span>
-                    <span>1.000.000 Gs.</span>
+        </header>
+
+        <div class="main-layout">
+            <!-- Menú lateral -->
+            <aside class="sidebar">
+                <nav>
+                    <button class="nav-btn active">
+                        <i class="fas fa-list"></i>
+                        <span>Movimientos</span>
+                    </button>
+                    <button class="nav-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Nueva Transacción</span>
+                    </button>
+                    <button class="nav-btn logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Panel principal -->
+            <main class="main-content">
+                <div class="dashboard-grid">
+                    <!-- Tarjeta de Balance Total -->
+                    <div class="card total-balance">
+                        <div class="card-header">
+                            <h2>Balance Total</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="amount positive">1.000.000 Gs.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta de Resumen -->
+                    <div class="card summary">
+                        <div class="card-header">
+                            <h2>Resumen</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="summary-row income">
+                                <span>Ingresos</span>
+                                <span class="value">+1.000.000 Gs.</span>
+                            </div>
+                            <div class="summary-row expense">
+                                <span>Gastos</span>
+                                <span class="value">-0 Gs.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Espacio para gráficos/tablas (futura implementación) -->
+                    <div class="card transactions-table">
+                        <div class="card-header">
+                            <h2>Últimos Movimientos</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="empty-state">No hay transacciones recientes</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
-                    <span>GASTOS</span>
-                    <span>0 Gs.</span>
-                </div>
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
-
 </body>
 </html>

@@ -1,106 +1,207 @@
-/* Reset */
+/* Reset y Variables */
+:root {
+    --primary: #0b0333;
+    --secondary: #1a0a55;
+    --accent: #6a5acd;
+    --text: #333;
+    --text-light: #fff;
+    --bg: #f5f5f7;
+    --card-bg: #fff;
+    --income: #4caf50;
+    --expense: #f44336;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-/* General */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #d9c6dc;
+/* Estructura Full-Screen */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bg);
 }
 
-/* Cabecera */
 .header {
-    background-color: #0b0333;
+    background-color: var(--primary);
+    color: var(--text-light);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header-content {
     display: flex;
     align-items: center;
-    padding: 10px 20px;
-    color: white;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
 }
 
-.header .logo {
-    height: 50px;
+.logo {
+    height: 40px;
     margin-right: 15px;
 }
 
-.header h1 {
-    font-size: 1.8rem;
-}
-
-/* Layout principal */
-.dashboard-container {
+.main-layout {
     display: flex;
-    padding: 20px;
-    gap: 20px;
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 /* Sidebar */
 .sidebar {
+    width: 250px;
+    background-color: var(--primary);
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 15px;
 }
 
-.sidebar button {
-    background-color: #0b0333;
-    color: white;
-    padding: 12px;
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 10px;
     border: none;
     border-radius: 8px;
+    background: transparent;
+    color: var(--text-light);
     cursor: pointer;
-    font-size: 1rem;
+    text-align: left;
+    transition: all 0.3s;
 }
 
-.sidebar button:hover {
-    background-color: #1a0a55;
+.nav-btn:hover, .nav-btn.active {
+    background-color: var(--secondary);
 }
 
-.sidebar .logout {
+.nav-btn i {
+    font-size: 1.1rem;
+}
+
+.logout {
     margin-top: auto;
+    background-color: rgba(255,255,255,0.1);
 }
 
-/* Panel principal */
+/* Main Content */
 .main-content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    padding: 1.5rem;
 }
 
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Cards */
 .card {
-    background-color: white;
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    overflow: hidden;
 }
 
-.total h2 {
+.card-header {
+    padding: 1rem 1.5rem;
+    background-color: var(--primary);
+    color: var(--text-light);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Tipografías y detalles */
+h1, h2 {
+    font-weight: 600;
+}
+
+h1 {
     font-size: 1.5rem;
-    font-weight: bold;
+}
+
+h2 {
+    font-size: 1.2rem;
 }
 
 .amount {
-    font-size: 1.3rem;
-    margin-top: 5px;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
 }
 
-.ingresos-gastos .row {
+.positive {
+    color: var(--income);
+}
+
+.summary-row {
     display: flex;
     justify-content: space-between;
-    font-size: 1rem;
-    margin: 10px 0;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.income .value {
+    color: var(--income);
+}
+
+.expense .value {
+    color: var(--expense);
+}
+
+.empty-state {
+    color: #999;
+    text-align: center;
+    padding: 2rem 0;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .dashboard-container {
+    .main-layout {
         flex-direction: column;
     }
 
     .sidebar {
+        width: 100%;
         flex-direction: row;
-        justify-content: space-around;
+        padding: 1rem;
+        overflow-x: auto;
+    }
+
+    .nav-btn {
+        flex-direction: column;
+        width: auto;
+        padding: 10px;
+        font-size: 0.8rem;
+    }
+
+    .nav-btn span {
+        display: none;
+    }
+
+    .logout {
+        margin-top: 0;
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
     }
 }
