@@ -1,0 +1,45 @@
+/* ===== ESTILOS GLOBALES ===== */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ===== ESTILOS COMPARTIDOS ===== */
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #f49842;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #dba527;
+}
+
+#logout-btn {
+  background-color: #db4437;
+  width: auto;
+}
+
+#logout-btn:hover {
+  background-color: #c1351d;
+}
