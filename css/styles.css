@@ -38,6 +38,7 @@ body {
     padding: 20px 0;
     text-align: center;
     flex-wrap: wrap;
+    animation: fadeIn 0.5s ease-in;
 }
 
 .hero .logo img {
