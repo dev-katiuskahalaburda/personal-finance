@@ -1,0 +1,116 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fuente y fondo general */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #d9c6dc; /* Morado claro como en la captura */
+    color: #000;
+}
+
+/* Hero (logo + título) */
+.hero {
+    background-color: #0b0333; /* Azul muy oscuro de la cabecera */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    text-align: center;
+    flex-wrap: wrap;
+}
+
+.hero .logo img {
+    width: 120px;
+    margin-bottom: 10px;
+}
+
+.hero-text {
+    color: white;
+    margin-left: 20px;
+}
+
+.hero-text h1 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.hero-text p {
+    font-size: 0.9rem;
+}
+
+/* Contenedor del login */
+.login-container {
+    background-color: #d9c6dc; /* Igual que el fondo general */
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.login-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* Formulario */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: left;
+}
+
+.login-form label {
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.login-form input {
+    padding: 12px;
+    border: none;
+    background-color: white;
+    font-size: 0.95rem;
+}
+
+.login-form button {
+    background-color: #0b0333;
+    color: white;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login-form button:hover {
+    background-color: #1a0a55;
+}
+
+/* Texto registro */
+.register-text {
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.register-text a {
+    color: blue;
+    text-decoration: underline;
+}
+
+/* Footer */
+footer {
+    background-color: #0b0333;
+    color: white;
+    text-align: center;
+    padding: 15px 10px;
+    font-size: 0.85rem;
+    margin-top: 20px;
+}
+
+footer p {
+    margin: 5px 0;
+}
