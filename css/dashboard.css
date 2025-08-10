@@ -55,12 +55,12 @@
 
 /* Sidebar */
 .sidebar {
-    flex: 1; /* proporción 1 */
+    flex: 1;
     background-color: var(--primary);
     padding: 1.5rem;
     display: flex;
-    justify-content: center;
-    gap: 2vw; /* espacio proporcional */
+    justify-content: flex-start; /* ahora pegada a la izquierda */
+    gap: 2vw;
     flex-wrap: wrap;
 }
 
@@ -172,18 +172,18 @@ h2 {
         flex-direction: column;
     }
 
-    .sidebar {
+ .sidebar {
         width: 100%;
-        flex-direction: row;
+        flex-direction: column; /* columna */
+        align-items: center; /* centrados horizontalmente */
         padding: 1rem;
-        overflow-x: auto;
+        gap: 1rem;
+        overflow-x: visible; /* sin scroll horizontal */
     }
-
     .nav-btn {
-        flex-direction: column;
-        width: auto;
-        padding: 10px;
-        font-size: 0.8rem;
+        width: 80%; /* ancho uniforme */
+        justify-content: center;
+        flex-direction: row; /* icono + texto en fila */
     }
 
     .logout {
