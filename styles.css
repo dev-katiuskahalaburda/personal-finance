@@ -5,6 +5,23 @@
     box-sizing: border-box;
 }
 
+/* inicio de styles.css */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Usa toda la altura visible */
+}
+
+/* Contenedor principal que crece para empujar el footer */
+main {
+    flex: 1;
+}
+
+
 /* Fuente y fondo general */
 body {
     font-family: Arial, sans-serif;
@@ -109,7 +126,8 @@ footer {
     text-align: center;
     padding: 15px 10px;
     font-size: 0.85rem;
-    margin-top: 20px;
+    /* margin-top: 20px;  Elimina este margen */
+    width: 100%;
 }
 
 footer p {
