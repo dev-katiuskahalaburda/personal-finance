@@ -87,7 +87,13 @@
 
 .nav-btn:hover, .nav-btn.active {
     background-color: var(--secondary);
-    transform: translateX(5px);
+    /* transform: translateX(5px); eliminado */
+}
+
+.nav-btn:active {
+    background-color: var(--accent);
+    color: var(--text-light);
+    border: 2px solid rgba(255,255,255,0.5);
 }
 
 .nav-btn i {
@@ -171,18 +177,18 @@
 
     .sidebar {
         position: relative;
-        flex-direction: column;
+        flex-direction: column; /* botones en columna */
         width: 100%;
         height: auto;
         padding: 1rem;
         top: 0;
-        gap: 1rem;
+        gap: 0.8rem;
         overflow-x: visible;
-        align-items: center;
+        align-items: stretch; /* botones ocupan ancho total */
     }
 
     .nav-btn {
-        width: 80%;
+        width: 100%;
         justify-content: center;
         flex-direction: row;
         font-size: 0.9rem;
