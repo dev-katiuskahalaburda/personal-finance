@@ -25,13 +25,13 @@ main {
 /* Fuente y fondo general */
 body {
     font-family: Arial, sans-serif;
-    background-color: #d9c6dc; /* Morado claro como en la captura */
+    background-color: #d9c6dc; /* Morado claro  */
     color: #000;
 }
 
 /* Hero (logo + título) */
 .hero {
-    background-color: #0b0333; /* Azul muy oscuro de la cabecera */
+    background-color: #0b0333; /* Azul oscuro */
     display: flex;
     align-items: center;
     justify-content: center;
