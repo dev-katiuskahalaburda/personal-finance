@@ -5,10 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!window.firebase || !window.firebaseAuth) {
     console.error('Firebase no está disponible');
 // Redirigir solo si no estamos ya en index.html
-    if (!window.location.pathname.includes('index.html')) {
-      setTimeout(() => window.location.href = 'index.html', 1000);
-    }
-    return;
+   // if (!window.location.pathname.includes('index.html')) {
+   //   setTimeout(() => window.location.href = 'index.html', 1000);
+   // }
+  //  return;
   }
 
   // Observador de autenticación
