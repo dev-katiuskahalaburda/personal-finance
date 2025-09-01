@@ -228,3 +228,31 @@
         font-size: 1.6rem; /* reducido */
     }
 }
+
+.transactions-list {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.transactions-list th,
+.transactions-list td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.transactions-list th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.transactions-list .income {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.transactions-list .expense {
+  color: #dc3545;
+  font-weight: 600;
+}
