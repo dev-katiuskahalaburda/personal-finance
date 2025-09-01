@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Spend - Añadir Transacción</title>
+    <link rel="stylesheet" href="./css/dashboard.css">
+    <link rel="stylesheet" href="./css/forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Scripts de autenticación -->
+    <script src="./js/auth/config.js"></script>
+    <script src="./js/auth/firestore.js"></script>
+    <script src="./js/auth/auth.js"></script>
+    
+    <script src="./js/transactions/add-transaction.js" defer></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Cabecera -->
+        <header class="header">
+            <div class="header-content">
+                <img src="./img/logo.png" alt="Logo Smart Spend" class="logo">
+                <h1>Smart Spend - Añadir Transacción</h1>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <!-- Menú lateral (igual que en dashboard) -->
+            <aside class="sidebar">
+                <nav>
+                    <button class="nav-btn" id="dashboard-btn">
+                        <i class="fas fa-list"></i>
+                        <span>Resumen</span>
+                    </button>
+                    <button class="nav-btn active">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Añadir Transacción</span>
+                    </button>
+                    <button class="nav-btn savings" id="savings-btn">
+                        <i class="fas fa-savings-alt"></i>
+                        <span>Ver ahorros</span>
+                    </button>
+                    <button class="nav-btn logout" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Contenido principal -->
+            <main class="main-content">
+                <div class="form-container">
+                    <h2>Añadir Nueva Transacción</h2>
+                    <form id="transaction-form">
+                        <div class="form-group">
+                            <label for="type">Tipo de transacción</label>
+                            <select id="type" name="type" required>
+                                <option value="income">Ingreso</option>
+                                <option value="expense">Gasto</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="amount">Monto (Gs.)</label>
+                            <input type="number" id="amount" name="amount" min="0" step="1000" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Descripción</label>
+                            <input type="text" id="description" name="description" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="category">Categoría</label>
+                            <select id="category" name="category" required>
+                                <option value="comida">Comida</option>
+                                <option value="transporte">Transporte</option>
+                                <option value="servicios">Servicios</option>
+                                <option value="entretenimiento">Entretenimiento</option>
+                                <option value="salario">Salario</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="date">Fecha</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">Guardar Transacción</button>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

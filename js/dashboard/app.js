@@ -32,6 +32,35 @@
   }
 });
 
+// Configurar navegación entre páginas
+function setupNavigation() {
+  // Botón para añadir transacción
+  const addTransactionBtn = document.getElementById("add-transaction-btn");
+  if (addTransactionBtn) {
+    addTransactionBtn.addEventListener("click", () => {
+      window.location.href = "add-transaction.html";
+    });
+  }
+
+  // Botón para ver ahorros (puedes crear savings.html después)
+  const savingsBtn = document.getElementById("savings-btn");
+  if (savingsBtn) {
+    savingsBtn.addEventListener("click", () => {
+      alert("Página de ahorros en desarrollo");
+      // window.location.href = "savings.html";
+    });
+  }
+
+  // Botón para volver al dashboard
+  const dashboardBtn = document.getElementById("dashboard-btn");
+  if (dashboardBtn) {
+    dashboardBtn.addEventListener("click", () => {
+      window.location.href = "dashboard.html";
+    });
+  }
+}
+
+
 // Cargar datos del usuario desde Firestore
 async function loadUserData(userId) {
   try {
@@ -126,9 +155,9 @@ function formatDate(date) {
     month: '2-digit',
     year: 'numeric'
   }).format(date);
-}
-      
-      
+}      
+
+// Manejar cierre de sesión
 document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.querySelector(".logout");
   if (logoutBtn) {
