@@ -129,13 +129,13 @@
 .card {
     background: var(--card-bg);
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    /* box-shadow: 0 4px 12px rgba(0,0,0,0.08); */
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .card:hover {
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.133);
 }
 
 .card-header {
