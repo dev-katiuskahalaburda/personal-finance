@@ -12,7 +12,7 @@
                             <h2>Balance Total</h2>
                         </div>
                         <div class="card-body">
-                            <p :class="['amount', financialSummary.balance >= 0 ? 'positive' : 'negative']">
+                            <p :class="['amount', (financialSummary.balance || 0) >= 0 ? 'positive' : 'negative']">
                                 {{ formatCurrency(financialSummary.balance) }}
                             </p>
                         </div>
@@ -26,11 +26,11 @@
                         <div class="card-body">
                             <div class="summary-row income">
                                 <span>Ingresos</span>
-                                <span class="value">+{{ formatCurrency(financialSummary.income) }}</span>
+                                <span class="value">+{{ formatCurrency(financialSummary.totalIncome) }}</span>
                             </div>
                             <div class="summary-row expense">
                                 <span>Egresos</span>
-                                <span class="value">-{{ formatCurrency(financialSummary.expenses) }}</span>
+                                <span class="value">-{{ formatCurrency(financialSummary.totalExpenses) }}</span>
                             </div>
                         </div>
                     </div>
@@ -72,9 +72,10 @@
         data() {
             return {
                 financialSummary: {
-                    income: 0,
-                    expenses: 0,
-                    balance: 0
+                    balance: 0,
+                    totalIncome: 0,
+                    totalExpenses: 0,
+                    transactionCount: 0
                 },
                 transactions: [],
                 isLoading: true
@@ -99,24 +100,51 @@
         methods: {
             async loadUserData() {
                 const user = window.firebaseAuth.currentUser;
-                if (!user) return;
+                if (!user) {
+                    console.log('No user found, redirecting...');
+                    window.location.href = "./index.html";
+                    return;
+                }
 
+                console.log('Loading data for user:', user.uid);
+                
                 try {
-                    // Use your existing Firestore functions
                     const summary = await window.getFinancialSummary(user.uid);
+                    console.log('Summary loaded:', summary);
                     this.financialSummary = summary;
                     
                     const transactions = await window.getTransactions(user.uid, 5);
+                    console.log('Transactions loaded:', transactions);
                     this.transactions = transactions;
                 } catch (error) {
                     console.error('Error loading data:', error);
                 }
             },
             formatCurrency(amount) {
-                return new Intl.NumberFormat('es-PY', {
-                    style: 'currency',
-                    currency: 'PYG'
-                }).format(amount).replace('PYG', 'Gs.');
+                // Handle undefined, null, or NaN values
+                if (amount === undefined || amount === null || isNaN(amount)) {
+                    console.log('Invalid amount detected:', amount);
+                    return 'Gs. 0';
+                }
+                
+                // Ensure it's a number
+                const numericAmount = Number(amount);
+                if (isNaN(numericAmount)) {
+                    console.log('Amount is not a number:', amount);
+                    return 'Gs. 0';
+                }
+                
+                try {
+                    return new Intl.NumberFormat('es-PY', {
+                        style: 'currency',
+                        currency: 'PYG',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(numericAmount).replace('PYG', 'Gs.');
+                } catch (error) {
+                    console.error('Error formatting currency:', error, 'Amount:', amount);
+                    return `Gs. ${numericAmount.toLocaleString()}`;
+                }
             },
             formatDate(date) {
                 if (!date) return 'Fecha no disponible';
