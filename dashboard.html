@@ -7,22 +7,20 @@
     <link rel="stylesheet" href="./css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-      <!-- Firebase SDK (versión compat) -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-   <!-- Scripts de autenticación -->
-  <script src="./js/auth/config.js"></script>
-  <script src="./js/auth/firestore.js"></script>
-  <script src="./js/auth/auth.js"></script>
-
-  <script src="./js/dashboard/app.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Your existing auth scripts -->
+    <script src="./js/auth/config.js"></script>
+    <script src="./js/auth/firestore.js"></script>
+    <script src="./js/auth/auth.js"></script>
+    <script src="./js/dashboard/app.js"></script>
 </head>
-
-
 <body>
     <div class="app-container">
-        <!-- Cabecera -->
+        <!-- Keep your existing header and sidebar -->
         <header class="header">
             <div class="header-content">
                 <img src="./img/logo.png" alt="Logo Smart Spend" class="logo">
@@ -31,78 +29,31 @@
         </header>
 
         <div class="main-layout">
-            <!-- Menú lateral -->
             <aside class="sidebar">
                 <nav>
-                    <button class="nav-btn active" id="dashboard-btn">  <!-- Botón: Resumen -->
+                    <button class="nav-btn active" id="dashboard-btn">
                         <i class="fas fa-list"></i>
                         <span>Resumen</span>
                     </button>
-                    <button class="nav-btn" id="add-transaction-btn"> <!-- Botón: Añadir Transacción -->
+                    <button class="nav-btn" id="add-transaction-btn">
                         <i class="fas fa-plus-circle"></i>
                         <span>Añadir Transacción</span>
                     </button>
-                    <button class="nav-btn" id="manage-transactions-btn"> <!-- Botón: Manejar Transacciones -->
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Manejar Transacción</span>
-                    </button>
-                    <button class="nav-btn savings" id="savings-btn">  <!-- Botón: Ver Ahorros -->
-                        <i class="fas fa-savings-alt"></i>
-                        <span>Ver ahorros</span>
-                    </button>
-                    <button class="nav-btn logout" id="logout-btn">  <!-- Botón: Cerrar Sesión -->
+                    <button class="nav-btn logout" id="logout-btn">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Cerrar Sesión</span>
                     </button>
                 </nav>
             </aside>
 
-            <!-- Panel principal -->
+            <!-- Vue app container - replace the old main content -->
             <main class="main-content">
-                <div class="dashboard-grid">
-                    <!-- Tarjeta de Balance Total -->
-                    <div class="card total-balance">
-                        <div class="card-header">
-                            <h2>Balance Total</h2>
-                        </div>
-                        <div class="card-body">
-                            <p class="amount positive">1.000.000 Gs.</p>
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta de Resumen -->
-                    <div class="card summary">
-                        <div class="card-header">
-                            <h2>Resumen</h2>
-                        </div>
-                        <div class="card-body">
-                            <div class="summary-row income">
-                                <span>Ingresos</span>
-                                <span class="value">+10.000.000 Gs.</span>
-                            </div>
-                            <div class="summary-row expense">
-                                <span>Egresos</span>
-                                <span class="value">-0 Gs.</span>
-                            </div>
-                                                        <div class="summary-row savings">
-                                <span>Ahorros</span>
-                                <span class="value">-10 Gs.</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Últimos Movimientos -->
-                    <div class="card transactions-table">
-                        <div class="card-header">
-                            <h2>Últimos Movimientos</h2>
-                        </div>
-                        <div class="card-body">
-                            <p class="empty-state">No hay transacciones recientes</p>
-                        </div>
-                    </div>
-                </div>
+                <div id="vue-app"></div>
             </main>
         </div>
     </div>
+
+    <!-- Load your Vue app -->
+    <script type="module" src="/vue-app/src/main.js"></script>
 </body>
 </html>
