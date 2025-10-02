@@ -85,7 +85,8 @@ window.addTransaction = async (userId, transactionData) => {
 // Obtener resumen financiero (FAST - usa transactionSummary)
 window.getFinancialSummary = async (userId) => {
   try {
-    // First try to get the pre-calculated summary
+    console.log('[Firestore] Getting summary for user:', userId);
+    
     const summaryDoc = await window.firebaseDb.collection('users')
       .doc(userId)
       .collection('transactionSummary')
@@ -93,11 +94,11 @@ window.getFinancialSummary = async (userId) => {
       .get();
 
     if (summaryDoc.exists) {
-      console.log('[Firestore] Usando transactionSummary (rápido)');
-      return summaryDoc.data();
+      const data = summaryDoc.data();
+      console.log('[Firestore] Summary data found:', data);
+      return data;
     } else {
-      console.log('[Firestore] Calculando summary desde transacciones (primera vez)');
-      // Fallback for existing users - calculate and create summary
+      console.log('[Firestore] No summary found, calculating...');
       return await window.calculateSummaryFromTransactions(userId);
     }
   } catch (error) {

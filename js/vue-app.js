@@ -1,4 +1,3 @@
-
 // Vue App wrapped in IIFE to prevent redeclaration
 (function() {
     const { createApp } = Vue;
@@ -77,11 +76,25 @@
                     expenses: 0,
                     balance: 0
                 },
-                transactions: []
+                transactions: [],
+                isLoading: true
             }
         },
         async mounted() {
+            // Wait for auth to be ready
+            await new Promise((resolve) => {
+                window.setupAuthListener((user) => {
+                    if (user) {
+                        resolve();
+                    } else {
+                        window.location.href = "./index.html";
+                    }
+                });
+            });
+            
+            console.log('Dashboard mounted - loading data...');
             await this.loadUserData();
+            this.isLoading = false;
         },
         methods: {
             async loadUserData() {
