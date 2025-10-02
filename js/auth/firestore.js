@@ -40,44 +40,88 @@ window.ensureTransactionSummary = async (userId) => {
   return summaryRef;
 };
 
-// Añadir transacción con actualización de summary
+// Añadir transacción con actualización de summary - FIXED VERSION
 window.addTransaction = async (userId, transactionData) => {
   try {
-    // 1. Ensure summary exists
-    const summaryRef = await window.ensureTransactionSummary(userId);
+    console.log('[Firestore] Adding transaction for user:', userId, 'Data:', transactionData);
     
-    // 2. Add the transaction
-    const transactionRef = await window.firebaseDb.collection('users')
-      .doc(userId)
-      .collection('transactions')
-      .add({
-        ...transactionData,
-        date: firebase.firestore.FieldValue.serverTimestamp(),
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-    // 3. Update transaction summary
-    const updateData = {
-      lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
-      lastTransactionDate: firebase.firestore.FieldValue.serverTimestamp()
+    const db = firebase.firestore();
+    const transactionRef = db.collection('users').doc(userId).collection('transactions').doc();
+    
+    // Ensure amount is stored as a proper number (integer for Guarani)
+    const transactionToSave = {
+      name: transactionData.name,
+      date: firebase.firestore.Timestamp.fromDate(new Date(transactionData.date)),
+      amount: Number(transactionData.amount), // Explicitly convert to number
+      type: transactionData.type,
+      category: transactionData.category,
+      description: transactionData.description || '',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
-
-    if (transactionData.type === 'income') {
-      updateData.balance = firebase.firestore.FieldValue.increment(transactionData.amount);
-      updateData.totalIncome = firebase.firestore.FieldValue.increment(transactionData.amount);
-    } else {
-      updateData.balance = firebase.firestore.FieldValue.increment(-transactionData.amount);
-      updateData.totalExpenses = firebase.firestore.FieldValue.increment(transactionData.amount);
-    }
     
-    updateData.transactionCount = firebase.firestore.FieldValue.increment(1);
-
-    await summaryRef.update(updateData);
-
-    console.log('[Firestore] Transacción añadida y summary actualizado');
-    return transactionRef;
+    console.log('[Firestore] Saving to Firestore:', transactionToSave);
+    
+    await transactionRef.set(transactionToSave);
+    
+    // Update the transaction summary
+    await window.updateTransactionSummary(userId);
+    
+    console.log('[Firestore] Transaction added successfully');
+    
   } catch (error) {
     console.error("[Firestore] Error añadiendo transacción:", error);
+    throw error;
+  }
+};
+
+// Update transaction summary - FIXED VERSION
+window.updateTransactionSummary = async (userId) => {
+  try {
+    const db = firebase.firestore();
+    const transactionsRef = db.collection('users').doc(userId).collection('transactions');
+    const snapshot = await transactionsRef.get();
+    
+    let totalIncome = 0;
+    let totalExpenses = 0;
+    let transactionCount = 0;
+    let lastTransactionDate = null;
+    
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const amount = Number(data.amount); // Ensure we're working with numbers
+      
+      if (data.type === 'income') {
+        totalIncome += amount;
+      } else if (data.type === 'expense') {
+        totalExpenses += amount;
+      }
+      
+      transactionCount++;
+      
+      // Update last transaction date
+      const transactionDate = data.date?.toDate();
+      if (transactionDate && (!lastTransactionDate || transactionDate > lastTransactionDate)) {
+        lastTransactionDate = transactionDate;
+      }
+    });
+    
+    const balance = totalIncome - totalExpenses;
+    
+    const summaryData = {
+      balance: Number(balance),
+      totalIncome: Number(totalIncome),
+      totalExpenses: Number(totalExpenses),
+      transactionCount: transactionCount,
+      lastTransactionDate: lastTransactionDate ? firebase.firestore.Timestamp.fromDate(lastTransactionDate) : null,
+      lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    await db.collection('users').doc(userId).collection('transactionSummary').doc('current').set(summaryData);
+    
+    console.log('[Firestore] Transaction summary updated:', summaryData);
+    
+  } catch (error) {
+    console.error('[Firestore] Error updating transaction summary:', error);
     throw error;
   }
 };
@@ -127,12 +171,14 @@ window.calculateSummaryFromTransactions = async (userId) => {
   
   snapshot.forEach(doc => {
     const data = doc.data();
+    const amount = Number(data.amount); // Ensure we're working with numbers
+    
     if (data.type === 'income') {
-      summary.totalIncome += data.amount;
-      summary.balance += data.amount;
+      summary.totalIncome += amount;
+      summary.balance += amount;
     } else {
-      summary.totalExpenses += data.amount;
-      summary.balance -= data.amount;
+      summary.totalExpenses += amount;
+      summary.balance -= amount;
     }
     
     // Track most recent transaction
