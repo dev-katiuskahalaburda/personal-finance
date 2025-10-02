@@ -31,12 +31,8 @@
             <aside class="sidebar">
                 <nav>
                     <button class="nav-btn active" id="dashboard-btn">
-                        <i class="fas fa-list"></i>
-                        <span>Resumen</span>
-                    </button>
-                    <button class="nav-btn" id="transactions-btn">
-                        <i class="fas fa-list"></i>
-                        <span>Transacciones</span>
+                        <i class="fas fa-home"></i> <!-- Changed icon -->
+                        <span>Inicio</span> <!-- Changed text -->
                     </button>
                     <button class="nav-btn" id="add-transaction-btn">
                         <i class="fas fa-plus-circle"></i>
@@ -44,7 +40,7 @@
                     </button>
                     <button class="nav-btn" id="summary-btn">
                         <i class="fas fa-chart-bar"></i>
-                        <span>Resumen Detallado</span>
+                        <span>Resumen Detallado</span> <!-- Now contains transactions functionality -->
                     </button>
                     <button class="nav-btn logout" id="logout-btn">
                         <i class="fas fa-sign-out-alt"></i>
@@ -81,7 +77,6 @@
         // Navigation handlers
         document.addEventListener('DOMContentLoaded', function() {
             const dashboardBtn = document.getElementById('dashboard-btn');
-            const transactionsBtn = document.getElementById('transactions-btn');
             const addTransactionBtn = document.getElementById('add-transaction-btn');
             const summaryBtn = document.getElementById('summary-btn');
             const logoutBtn = document.getElementById('logout-btn');
@@ -90,13 +85,6 @@
                 dashboardBtn.addEventListener('click', function() {
                     window.location.hash = '/';
                     updateActiveNav('dashboard-btn');
-                });
-            }
-            
-            if (transactionsBtn) {
-                transactionsBtn.addEventListener('click', function() {
-                    window.location.hash = '/transactions';
-                    updateActiveNav('transactions-btn');
                 });
             }
             
@@ -127,18 +115,15 @@
             }
 
             function updateActiveNav(activeId) {
-                // Remove active class from all buttons
                 document.querySelectorAll('.nav-btn').forEach(btn => {
                     btn.classList.remove('active');
                 });
-                // Add active class to clicked button
                 const activeBtn = document.getElementById(activeId);
                 if (activeBtn) {
                     activeBtn.classList.add('active');
                 }
             }
 
-            // Update active nav based on current hash
             function updateNavFromHash() {
                 const hash = window.location.hash;
                 let activeId = 'dashboard-btn';
@@ -147,17 +132,12 @@
                     activeId = 'add-transaction-btn';
                 } else if (hash === '#/summary') {
                     activeId = 'summary-btn';
-                } else if (hash === '#/transactions') {
-                    activeId = 'transactions-btn';
                 }
                 
                 updateActiveNav(activeId);
             }
 
-            // Initial nav update
             updateNavFromHash();
-            
-            // Update nav when hash changes
             window.addEventListener('hashchange', updateNavFromHash);
         });
     </script>  

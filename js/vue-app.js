@@ -2,19 +2,14 @@
 (function() {
     const { createApp } = Vue;
 
-    // Import components (they'll be loaded via script tags)
     const Dashboard = window.DashboardComponent;
     const AddTransaction = window.AddTransactionComponent;
-    const SummaryDashboard = window.SummaryDashboardComponent;
-    const DetailedTransactions = window.DetailedTransactionsComponent;
-    // Future components will be added here
+    const SummaryDashboard = window.DetailedTransactionsComponent; // Now using DetailedTransactions as SummaryDashboard
 
     const routes = [
         { path: '/', component: Dashboard },
         { path: '/add-transaction', component: AddTransaction },
-        { path: '/summary', component: SummaryDashboard },
-        { path: '/transactions', component: DetailedTransactions }
-        // Future routes will be added here
+        { path: '/summary', component: SummaryDashboard } // This now shows the detailed transactions view
     ];
 
     const router = VueRouter.createRouter({
