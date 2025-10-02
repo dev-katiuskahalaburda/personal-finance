@@ -52,7 +52,32 @@
             </main>
         </div>
     </div>
-
+    
+<script>
+// Add this script to handle navigation within your dashboard.html
+document.addEventListener('DOMContentLoaded', function() {
+    // Dashboard button - goes to #/
+    document.getElementById('dashboard-btn').addEventListener('click', function() {
+        window.location.hash = '/';
+    });
+    
+    // Add transaction button - goes to #/add-transaction
+    document.getElementById('add-transaction-btn').addEventListener('click', function() {
+        window.location.hash = '/add-transaction';
+    });
+    
+    // Logout button - keep your existing logic
+    document.getElementById('logout-btn').addEventListener('click', async function() {
+        try {
+            await window.logoutUser();
+            window.location.href = "./index.html";
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+            alert("No se pudo cerrar sesión. Intenta de nuevo.");
+        }
+    });
+});
+</script>
     <!-- Load your Vue app -->
     <script type="module" src="/vue-app/src/main.js"></script>
 </body>
