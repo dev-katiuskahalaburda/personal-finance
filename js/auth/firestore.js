@@ -213,4 +213,82 @@ window.getTransactions = async (userId, limit = 5) => {
   return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
 
+// Get all transactions for a user
+window.getAllTransactions = async (userId) => {
+  try {
+    console.log('[Firestore] Getting all transactions for user:', userId);
+    
+    const db = firebase.firestore();
+    const transactionsRef = db.collection('users').doc(userId).collection('transactions');
+    const snapshot = await transactionsRef.orderBy('date', 'desc').get();
+    
+    const transactions = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    console.log(`[Firestore] Retrieved ${transactions.length} transactions`);
+    return transactions;
+    
+  } catch (error) {
+    console.error('[Firestore] Error getting transactions:', error);
+    throw error;
+  }
+};
+
+// Update a transaction
+window.updateTransaction = async (userId, transactionId, updateData) => {
+  try {
+    console.log('[Firestore] Updating transaction:', { userId, transactionId, updateData });
+    
+    const db = firebase.firestore();
+    const transactionRef = db.collection('users').doc(userId).collection('transactions').doc(transactionId);
+    
+    // Ensure amount is properly converted if it's being updated
+    if (updateData.amount) {
+      updateData.amount = Number(updateData.amount);
+    }
+    
+    // Convert date if it's being updated
+    if (updateData.date) {
+      updateData.date = firebase.firestore.Timestamp.fromDate(new Date(updateData.date));
+    }
+    
+    await transactionRef.update({
+      ...updateData,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    // Update summary
+    await window.updateTransactionSummary(userId);
+    
+    console.log('[Firestore] Transaction updated successfully');
+    
+  } catch (error) {
+    console.error('[Firestore] Error updating transaction:', error);
+    throw error;
+  }
+};
+
+// Delete a transaction
+window.deleteTransaction = async (userId, transactionId) => {
+  try {
+    console.log('[Firestore] Deleting transaction:', { userId, transactionId });
+    
+    const db = firebase.firestore();
+    const transactionRef = db.collection('users').doc(userId).collection('transactions').doc(transactionId);
+    
+    await transactionRef.delete();
+    
+    // Update summary
+    await window.updateTransactionSummary(userId);
+    
+    console.log('[Firestore] Transaction deleted successfully');
+    
+  } catch (error) {
+    console.error('[Firestore] Error deleting transaction:', error);
+    throw error;
+  }
+};
+
 console.log('[Firestore] Módulo de base de datos cargado');

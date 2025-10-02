@@ -6,12 +6,14 @@
     const Dashboard = window.DashboardComponent;
     const AddTransaction = window.AddTransactionComponent;
     const SummaryDashboard = window.SummaryDashboardComponent;
+    const DetailedTransactions = window.DetailedTransactionsComponent;
     // Future components will be added here
 
     const routes = [
         { path: '/', component: Dashboard },
         { path: '/add-transaction', component: AddTransaction },
-        { path: '/summary', component: SummaryDashboard }
+        { path: '/summary', component: SummaryDashboard },
+        { path: '/transactions', component: DetailedTransactions }
         // Future routes will be added here
     ];
 

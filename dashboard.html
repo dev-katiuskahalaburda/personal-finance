@@ -34,6 +34,10 @@
                         <i class="fas fa-list"></i>
                         <span>Resumen</span>
                     </button>
+                    <button class="nav-btn" id="transactions-btn">
+                        <i class="fas fa-list"></i>
+                        <span>Transacciones</span>
+                    </button>
                     <button class="nav-btn" id="add-transaction-btn">
                         <i class="fas fa-plus-circle"></i>
                         <span>Añadir Transacción</span>
@@ -77,6 +81,7 @@
         // Navigation handlers
         document.addEventListener('DOMContentLoaded', function() {
             const dashboardBtn = document.getElementById('dashboard-btn');
+            const transactionsBtn = document.getElementById('transactions-btn');
             const addTransactionBtn = document.getElementById('add-transaction-btn');
             const summaryBtn = document.getElementById('summary-btn');
             const logoutBtn = document.getElementById('logout-btn');
@@ -85,6 +90,13 @@
                 dashboardBtn.addEventListener('click', function() {
                     window.location.hash = '/';
                     updateActiveNav('dashboard-btn');
+                });
+            }
+            
+            if (transactionsBtn) {
+                transactionsBtn.addEventListener('click', function() {
+                    window.location.hash = '/transactions';
+                    updateActiveNav('transactions-btn');
                 });
             }
             
@@ -135,6 +147,8 @@
                     activeId = 'add-transaction-btn';
                 } else if (hash === '#/summary') {
                     activeId = 'summary-btn';
+                } else if (hash === '#/transactions') {
+                    activeId = 'transactions-btn';
                 }
                 
                 updateActiveNav(activeId);
