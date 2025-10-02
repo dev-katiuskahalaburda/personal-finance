@@ -13,7 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
-    <!-- Your existing auth scripts -->
+    <!-- Existing auth scripts -->
     <script src="./js/auth/config.js"></script>
     <script src="./js/auth/firestore.js"></script>
     <script src="./js/auth/auth.js"></script>
@@ -38,6 +38,10 @@
                         <i class="fas fa-plus-circle"></i>
                         <span>Añadir Transacción</span>
                     </button>
+                    <button class="nav-btn" id="summary-btn">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Resumen Detallado</span>
+                    </button>
                     <button class="nav-btn logout" id="logout-btn">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Cerrar Sesión</span>
@@ -55,38 +59,93 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/vue-router@4"></script>
     
+    <!-- Utility scripts -->
+    <script src="./js/utils/formatters.js"></script>
+    <script src="./js/utils/validators.js"></script>
+    
+    <!-- Component scripts -->
+    <script src="./js/components/Dashboard.js"></script>
+    <script src="./js/components/AddTransaction.js"></script>
+    <script src="./js/components/SummaryDashboard.js"></script>
+    <script src="./js/components/DetailedTransactions.js"></script>
+    <script src="./js/components/SavingsDashboard.js"></script>
+    
+    <!-- Main app script -->
+    <script src="./js/vue-app.js"></script>
+    
     <script>
         // Navigation handlers
-    document.addEventListener('DOMContentLoaded', function() {
-        const dashboardBtn = document.getElementById('dashboard-btn');
-        const addTransactionBtn = document.getElementById('add-transaction-btn');
-        const logoutBtn = document.getElementById('logout-btn');
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboardBtn = document.getElementById('dashboard-btn');
+            const addTransactionBtn = document.getElementById('add-transaction-btn');
+            const summaryBtn = document.getElementById('summary-btn');
+            const logoutBtn = document.getElementById('logout-btn');
 
-        if (dashboardBtn) {
-            dashboardBtn.addEventListener('click', function() {
-                window.location.hash = '/';
-            });
-        }
-        
-        if (addTransactionBtn) {
-            addTransactionBtn.addEventListener('click', function() {
-                window.location.hash = '/add-transaction';
-            });
-        }
-        
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', async function() {
-                try {
-                    await window.logoutUser();
-                    window.location.href = "./index.html";
-                } catch (error) {
-                    console.error("Error al cerrar sesión:", error);
-                    alert("No se pudo cerrar sesión. Intenta de nuevo.");
+            if (dashboardBtn) {
+                dashboardBtn.addEventListener('click', function() {
+                    window.location.hash = '/';
+                    updateActiveNav('dashboard-btn');
+                });
+            }
+            
+            if (addTransactionBtn) {
+                addTransactionBtn.addEventListener('click', function() {
+                    window.location.hash = '/add-transaction';
+                    updateActiveNav('add-transaction-btn');
+                });
+            }
+            
+            if (summaryBtn) {
+                summaryBtn.addEventListener('click', function() {
+                    window.location.hash = '/summary';
+                    updateActiveNav('summary-btn');
+                });
+            }
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', async function() {
+                    try {
+                        await window.logoutUser();
+                        window.location.href = "./index.html";
+                    } catch (error) {
+                        console.error("Error al cerrar sesión:", error);
+                        alert("No se pudo cerrar sesión. Intenta de nuevo.");
+                    }
+                });
+            }
+
+            function updateActiveNav(activeId) {
+                // Remove active class from all buttons
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                // Add active class to clicked button
+                const activeBtn = document.getElementById(activeId);
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
                 }
-            });
-        }
-    });
-    </script>
-    <script src="./js/vue-app.js"></script>    
+            }
+
+            // Update active nav based on current hash
+            function updateNavFromHash() {
+                const hash = window.location.hash;
+                let activeId = 'dashboard-btn';
+                
+                if (hash === '#/add-transaction') {
+                    activeId = 'add-transaction-btn';
+                } else if (hash === '#/summary') {
+                    activeId = 'summary-btn';
+                }
+                
+                updateActiveNav(activeId);
+            }
+
+            // Initial nav update
+            updateNavFromHash();
+            
+            // Update nav when hash changes
+            window.addEventListener('hashchange', updateNavFromHash);
+        });
+    </script>  
 </body>
 </html>

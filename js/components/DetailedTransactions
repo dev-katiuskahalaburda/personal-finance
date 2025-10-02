@@ -1,0 +1,16 @@
+// components/DetailedTransactions.js
+window.DetailedTransactionsComponent = {
+    template: `
+        <div class="detailed-transactions">
+            <div class="section-header">
+                <h2>Transacciones Detalladas</h2>
+                <p>Vista completa de todas tus transacciones</p>
+            </div>
+            <div class="coming-soon">
+                <i class="fas fa-receipt"></i>
+                <h3>Próximamente</h3>
+                <p>Esta sección estará disponible en una futura actualización</p>
+            </div>
+        </div>
+    `
+};
