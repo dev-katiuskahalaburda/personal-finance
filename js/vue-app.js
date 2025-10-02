@@ -1,35 +1,4 @@
 
-// Navigation handlers
-document.addEventListener('DOMContentLoaded', function() {
-    const dashboardBtn = document.getElementById('dashboard-btn');
-    const addTransactionBtn = document.getElementById('add-transaction-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-
-    if (dashboardBtn) {
-        dashboardBtn.addEventListener('click', function() {
-            window.location.hash = '/';
-        });
-    }
-    
-    if (addTransactionBtn) {
-        addTransactionBtn.addEventListener('click', function() {
-            window.location.hash = '/add-transaction';
-        });
-    }
-    
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async function() {
-            try {
-                await window.logoutUser();
-                window.location.href = "./index.html";
-            } catch (error) {
-                console.error("Error al cerrar sesión:", error);
-                alert("No se pudo cerrar sesión. Intenta de nuevo.");
-            }
-        });
-    }
-});
-
 // Vue App wrapped in IIFE to prevent redeclaration
 (function() {
     const { createApp } = Vue;
