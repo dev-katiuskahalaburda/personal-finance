@@ -1,5 +1,4 @@
 // Vue App wrapped in IIFE to prevent redeclaration
-// Vue App wrapped in IIFE to prevent redeclaration
 (function() {
     const { createApp } = Vue;
 
@@ -175,23 +174,23 @@
                         </select>
                     </div>
                     
-                    <!-- Amount -->
+                    <!-- Amount - Changed to text input for better control -->
                     <div class="form-group">
                         <label for="amount">Monto (Gs.) *</label>
                         <input 
-                            type="number" 
+                            type="text" 
                             id="amount" 
-                            v-model.number="transaction.amount"
-                            min="1" 
-                            step="1000" 
+                            v-model="displayAmount"
                             required 
                             placeholder="50000"
-                            @input="validateAmount"
+                            @input="formatAmountInput"
+                            @blur="validateAmount"
                             :class="{ 'input-error': amountError }"
                         >
                         <div v-if="amountError" class="error-message">
                             {{ amountError }}
                         </div>
+                        <small class="input-hint">Ingresa solo números sin puntos ni comas</small>
                     </div>
                     
                     <!-- Description -->
@@ -269,6 +268,11 @@
                         <span v-else>Guardando...</span>
                     </button>
                     
+                    <!-- Debug info (remove in production) -->
+                    <div v-if="debugInfo" class="debug-info">
+                        <small>Debug: Raw: {{ debugInfo.raw }}, Number: {{ debugInfo.number }}, Storing: {{ debugInfo.storing }}</small>
+                    </div>
+                    
                     <!-- Status Messages -->
                     <div v-if="message" :class="['message', messageType]">
                         {{ message }}
@@ -287,17 +291,19 @@
             return {
                 transaction: {
                     type: 'expense',
-                    amount: null,
+                    amount: null, // This will store the actual number
                     name: '',
                     category: 'comida',
                     date: new Date().toISOString().split('T')[0],
                     description: ''
                 },
+                displayAmount: '', // This will store the displayed string
                 loading: false,
                 message: '',
                 messageType: '',
                 maxDate: new Date().toISOString().split('T')[0],
-                amountError: ''
+                amountError: '',
+                debugInfo: null // Remove this in production
             }
         },
         computed: {
@@ -309,14 +315,51 @@
             }
         },
         methods: {
+            formatAmountInput(event) {
+                // Remove any non-digit characters
+                let rawValue = event.target.value.replace(/[^\d]/g, '');
+                
+                // Remove leading zeros
+                if (rawValue.length > 1) {
+                    rawValue = rawValue.replace(/^0+/, '');
+                }
+                
+                // Update display (show raw numbers)
+                this.displayAmount = rawValue;
+                
+                // Convert to number and store
+                if (rawValue) {
+                    const numericValue = parseInt(rawValue, 10);
+                    if (!isNaN(numericValue)) {
+                        this.transaction.amount = numericValue;
+                        this.debugInfo = {
+                            raw: rawValue,
+                            number: numericValue,
+                            storing: this.transaction.amount
+                        };
+                    }
+                } else {
+                    this.transaction.amount = null;
+                    this.debugInfo = null;
+                }
+                
+                this.amountError = '';
+            },
+            
             validateAmount() {
-                if (this.transaction.amount && this.transaction.amount <= 0) {
+                if (!this.transaction.amount || this.transaction.amount <= 0) {
                     this.amountError = 'El monto debe ser mayor a 0';
                     return false;
                 }
                 
-                if (this.transaction.amount > 1000000000) {
+                if (this.transaction.amount > 1000000000000) { // 1 trillion
                     this.amountError = 'El monto es demasiado grande';
+                    return false;
+                }
+                
+                // Ensure it's a whole number (no decimals)
+                if (!Number.isInteger(this.transaction.amount)) {
+                    this.amountError = 'El monto debe ser un número entero';
                     return false;
                 }
                 
@@ -333,6 +376,12 @@
             },
             
             async submitTransaction() {
+                console.log('Submitting transaction with amount:', {
+                    displayAmount: this.displayAmount,
+                    transactionAmount: this.transaction.amount,
+                    type: typeof this.transaction.amount
+                });
+                
                 if (!this.validateAmount() || !this.isFormValid) return;
                 
                 this.loading = true;
@@ -342,15 +391,22 @@
                     const user = window.firebaseAuth.currentUser;
                     if (!user) throw new Error('Usuario no autenticado');
                     
+                    // Ensure we're storing a proper integer
+                    const finalAmount = Math.round(Number(this.transaction.amount));
+                    
+                    console.log('Final amount to store:', finalAmount);
+                    
                     const transactionData = {
                         type: this.transaction.type,
-                        amount: Number(this.transaction.amount),
+                        amount: finalAmount, // Store as integer
                         name: this.transaction.name.trim(),
                         category: this.transaction.category,
                         date: new Date(this.transaction.date),
                         description: this.transaction.description.trim(),
                         createdAt: new Date()
                     };
+                    
+                    console.log('Transaction data being sent:', transactionData);
                     
                     await window.addTransaction(user.uid, transactionData);
                     
@@ -363,6 +419,7 @@
                     }, 1500);
                     
                 } catch (error) {
+                    console.error('Error adding transaction:', error);
                     this.message = `Error: ${error.message}`;
                     this.messageType = 'error';
                 } finally {
@@ -372,11 +429,13 @@
             
             resetForm() {
                 this.transaction.amount = null;
+                this.displayAmount = '';
                 this.transaction.name = '';
                 this.transaction.description = '';
                 this.transaction.date = new Date().toISOString().split('T')[0];
                 this.amountError = '';
                 this.message = '';
+                this.debugInfo = null;
             }
         },
         mounted() {
