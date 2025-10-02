@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import Dashboard from '@/views/Dashboard.vue'
 import AddTransaction from '@/views/AddTransaction.vue'
 
@@ -16,7 +16,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(), // Change this line
   routes
 })
 
