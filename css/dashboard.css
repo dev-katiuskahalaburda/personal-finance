@@ -1,14 +1,14 @@
 /* Reset y Variables */
 :root {
-    --primary: #0b0333;
-    --secondary: #1a0a55;
+    --primary: #1d114f; /* Slightly less dark */
+    --secondary: #2a1e6a;
     --accent: #6a5acd;
     --text: #333;
     --text-light: #fff;
-    --bg: #d9c6dc;
+    --bg: #f2f4f7; /* Lighter, more neutral background */
     --card-bg: #fff;
-    --income: #4caf50;
-    --expense: #f44336;
+    --income: #28a745; /* Using standard success green */
+    --expense: #dc3545; /* Using standard danger red */
     --sidebar-width: 250px;
 }
 
@@ -93,6 +93,7 @@
     background-color: var(--accent);
     color: var(--text-light);
     border: 2px solid rgba(255,255,255,0.5);
+    transform: scale(0.98); /* Added click effect */
 }
 
 .nav-btn i {
@@ -129,13 +130,14 @@
 .card {
     background: var(--card-bg);
     border-radius: 12px;
-    /* box-shadow: 0 4px 12px rgba(0,0,0,0.08); */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Added subtle shadow */
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .card:hover {
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.133);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Smoother hover shadow */
+    transform: translateY(-3px); /* Subtle lift on hover */
 }
 
 .card-header {
@@ -395,13 +397,13 @@
 }
 
 .message.success {
-    background-color: #d4edda;
+    background-color: #e6ffed; /* Lighter background */
     color: #155724;
     border: 1px solid #c3e6cb;
 }
 
 .message.error {
-    background-color: #f8d7da;
+    background-color: #fff0f3; /* Lighter background */
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
@@ -447,7 +449,7 @@
     padding: 1.5rem;
     border-radius: 12px;
     margin-bottom: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* More prominent filter card */
 }
 
 .filters-grid {
@@ -473,14 +475,18 @@
     font-size: 0.9rem;
 }
 
+.filter-group input {
+    padding-right: 2.5rem; /* Make space for the icon */
+}
+
 .search-input {
     position: relative;
 }
 
 .search-input i {
     position: absolute;
-    right: 10px;
-    top: 50%;
+    right: 15px; /* More padding */
+    top: 55%; /* Subtle adjustment */
     transform: translateY(-50%);
     color: #666;
 }
@@ -706,5 +712,20 @@
     
     .actions {
         flex-direction: column;
+    }
+}
+
+/* Dashboard Grid Layout (Desktop) */
+@media (min-width: 992px) {
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Two columns for cards */
+        grid-template-rows: auto auto; /* Two rows */
+        gap: 1.5rem;
+    }
+    
+    /* Make the Recent Transactions table span both columns */
+    .transactions-table.card { 
+        grid-column: 1 / 3; 
     }
 }
