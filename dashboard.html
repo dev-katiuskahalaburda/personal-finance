@@ -50,105 +50,114 @@
         </div>
     </div>
 
+    <!-- Vue CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/vue-router@4"></script>
+
     <script>
     // Navigation handlers
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('dashboard-btn').addEventListener('click', function() {
-            window.location.hash = '/';
-        });
-        
-        document.getElementById('add-transaction-btn').addEventListener('click', function() {
-            window.location.hash = '/add-transaction';
-        });
-        
-        document.getElementById('logout-btn').addEventListener('click', async function() {
-            try {
-                await window.logoutUser();
-                window.location.href = "./index.html";
-            } catch (error) {
-                console.error("Error al cerrar sesión:", error);
-                alert("No se pudo cerrar sesión. Intenta de nuevo.");
-            }
-        });
-    });
-    </script>
+        const dashboardBtn = document.getElementById('dashboard-btn');
+        const addTransactionBtn = document.getElementById('add-transaction-btn');
+        const logoutBtn = document.getElementById('logout-btn');
 
-    <!-- Vue CDN Approach -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/vue-router@4"></script>
-    <script>
-    // Simple Vue app
+        if (dashboardBtn) {
+            dashboardBtn.addEventListener('click', function() {
+                window.location.hash = '/';
+            });
+        }
+        
+        if (addTransactionBtn) {
+            addTransactionBtn.addEventListener('click', function() {
+                window.location.hash = '/add-transaction';
+            });
+        }
+        
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async function() {
+                try {
+                    await window.logoutUser();
+                    window.location.href = "./index.html";
+                } catch (error) {
+                    console.error("Error al cerrar sesión:", error);
+                    alert("No se pudo cerrar sesión. Intenta de nuevo.");
+                }
+            });
+        }
+    });
+
+    // Vue App - ONLY ONCE in the file
     const { createApp } = Vue;
 
     const Dashboard = {
-    template: `
-        <div class="vue-dashboard">
-        <div class="dashboard-grid">
-            <!-- Total Balance Card -->
-            <div class="card total-balance">
-            <div class="card-header">
-                <h2>Balance Total</h2>
-            </div>
-            <div class="card-body">
-                <p class="amount positive">1.000.000 Gs.</p>
-            </div>
-            </div>
+        template: `
+            <div class="vue-dashboard">
+                <div class="dashboard-grid">
+                    <!-- Total Balance Card -->
+                    <div class="card total-balance">
+                        <div class="card-header">
+                            <h2>Balance Total</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="amount positive">1.000.000 Gs.</p>
+                        </div>
+                    </div>
 
-            <!-- Summary Card -->
-            <div class="card summary">
-            <div class="card-header">
-                <h2>Resumen</h2>
-            </div>
-            <div class="card-body">
-                <div class="summary-row income">
-                <span>Ingresos</span>
-                <span class="value">+10.000.000 Gs.</span>
-                </div>
-                <div class="summary-row expense">
-                <span>Egresos</span>
-                <span class="value">-0 Gs.</span>
-                </div>
-            </div>
-            </div>
+                    <!-- Summary Card -->
+                    <div class="card summary">
+                        <div class="card-header">
+                            <h2>Resumen</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="summary-row income">
+                                <span>Ingresos</span>
+                                <span class="value">+10.000.000 Gs.</span>
+                            </div>
+                            <div class="summary-row expense">
+                                <span>Egresos</span>
+                                <span class="value">-0 Gs.</span>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Recent Transactions -->
-            <div class="card transactions-table">
-            <div class="card-header">
-                <h2>Últimos Movimientos</h2>
+                    <!-- Recent Transactions -->
+                    <div class="card transactions-table">
+                        <div class="card-header">
+                            <h2>Últimos Movimientos</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="empty-state">No hay transacciones recientes</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <p class="empty-state">No hay transacciones recientes</p>
-            </div>
-            </div>
-        </div>
-        </div>
-    `,
-    mounted() {
-        console.log('Vue Dashboard loaded!');
-    }
+        `,
+        mounted() {
+            console.log('Vue Dashboard loaded!');
+        }
     };
 
     const AddTransaction = {
-    template: `
-        <div class="form-container">
-        <h2>Añadir Nueva Transacción</h2>
-        <p>Formulario de transacción - En desarrollo</p>
-        </div>
-    `
+        template: `
+            <div class="form-container">
+                <h2>Añadir Nueva Transacción</h2>
+                <p>Formulario de transacción - En desarrollo</p>
+            </div>
+        `
     };
 
     const routes = [
-    { path: '/', component: Dashboard },
-    { path: '/add-transaction', component: AddTransaction }
+        { path: '/', component: Dashboard },
+        { path: '/add-transaction', component: AddTransaction }
     ];
 
     const router = VueRouter.createRouter({
-    history: VueRouter.createWebHashHistory(),
-    routes
+        history: VueRouter.createWebHashHistory(),
+        routes
     });
 
     const app = createApp({
-    template: `<router-view></router-view>`
+        template: `<router-view></router-view>`
     });
 
     app.use(router);
