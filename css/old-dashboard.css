@@ -1,4 +1,3 @@
-
 /* Reset y Variables */
 :root {
     --primary: #1d114f; /* Slightly less dark */
@@ -11,8 +10,6 @@
     --income: #28a745; /* Using standard success green */
     --expense: #dc3545; /* Using standard danger red */
     --sidebar-width: 250px;
-    --sidebar-collapsed-width: 80px;
-    --secondary-light: #6a5acd; /* Lighter accent for active states */
 }
 
 * {
@@ -54,27 +51,6 @@
     height: 40px;
 }
 
-/* Toggle button for sidebar */
-.sidebar-toggle {
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    z-index: 1001;
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 0.5rem;
-    border-radius: 6px;
-    cursor: pointer;
-    display: none;
-    transition: all 0.3s ease;
-}
-
-.sidebar-toggle:hover {
-    background: var(--secondary);
-    transform: scale(1.05);
-}
-
 /* Sidebar fija a la izquierda */
 .sidebar {
     position: fixed;
@@ -91,28 +67,6 @@
     padding-top: calc(3rem + 20px);
     overflow-y: auto;
     justify-content: flex-start;
-    transition: width 0.3s ease, padding 0.3s ease;
-}
-
-/* Collapsible sidebar */
-.sidebar.collapsed {
-    width: var(--sidebar-collapsed-width);
-    padding: 1.5rem 0.5rem;
-    align-items: center;
-}
-
-.sidebar.collapsed .nav-btn {
-    justify-content: center;
-    padding: 12px;
-}
-
-.sidebar.collapsed .nav-btn span {
-    display: none;
-}
-
-.sidebar.collapsed .nav-btn i {
-    margin: 0;
-    font-size: 1.3rem;
 }
 
 .nav-btn {
@@ -131,22 +85,8 @@
     font-size: 1rem;
 }
 
-/* Enhanced Active State - Pill Style */
-.nav-btn.active {
-    background: rgba(106, 90, 205, 0.15);
-    color: var(--text-light);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(106, 90, 205, 0.3);
-    border: 1px solid rgba(106, 90, 205, 0.3);
-    transform: none;
-}
-
-/* Enhanced Hover Effects */
-.nav-btn:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(8px);
-    transform: translateX(4px);
-    border-radius: 8px;
+.nav-btn:hover, .nav-btn.active {
+    background-color: var(--secondary);
 }
 
 .nav-btn:active {
@@ -159,7 +99,6 @@
 .nav-btn i {
     font-size: 1.2rem;
     min-width: 25px;
-    transition: font-size 0.3s ease;
 }
 
 .logout {
@@ -175,63 +114,10 @@
     max-width: 1200px;
     width: calc(100% - var(--sidebar-width));
     padding: 1rem;
-    transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
-/* Adjust main layout when sidebar is collapsed */
-.sidebar.collapsed ~ .main-layout {
-    margin-left: var(--sidebar-collapsed-width);
-    width: calc(100% - var(--sidebar-collapsed-width));
-}
-
-/* Mobile Slide-in Sidebar */
-@media (max-width: 768px) {
-    .sidebar {
-        position: fixed;
-        top: 0;
-        left: -100%;
-        height: 100%;
-        width: 280px;
-        transition: left 0.3s ease;
-        z-index: 1000;
-        padding-top: 5rem;
-    }
-    
-    .sidebar.open {
-        left: 0;
-    }
-    
-    /* Overlay for mobile */
-    .sidebar-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        display: none;
-    }
-    
-    .sidebar-overlay.active {
-        display: block;
-    }
-
-    .sidebar-toggle {
-        display: block;
-    }
-
-    .main-layout {
-        margin-left: 0;
-        width: 100%;
-        margin-top: 10px;
-        padding: 0.5rem;
-    }
-
-    .sidebar.collapsed ~ .main-layout {
-        margin-left: 0;
-        width: 100%;
-    }
+.main-content {
+    padding: 1.5rem 2rem;
 }
 
 .dashboard-grid {
@@ -317,6 +203,13 @@
 
     .logout {
         margin-top: 0;
+    }
+
+    .main-layout {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 10px;
+        padding: 0.5rem;
     }
 
     .main-content {
@@ -835,78 +728,4 @@
     .transactions-table.card { 
         grid-column: 1 / 3; 
     }
-}
-
-/* Dark Mode Support */
-.dark-mode {
-    --bg: #121212;
-    --card-bg: #1e1e1e;
-    --text: #e5e5e5;
-    --text-light: #ffffff;
-    --primary: #2a1e6a;
-    --secondary: #3a2e8a;
-}
-
-.dark-mode .sidebar {
-    background: linear-gradient(180deg, #121212 0%, #1a1a1a 100%);
-    border-right: 1px solid #333;
-}
-
-.dark-mode .nav-btn {
-    color: #e5e5e5;
-}
-
-.dark-mode .nav-btn.active {
-    background: rgba(106, 90, 205, 0.25);
-    color: #ffffff;
-}
-
-.dark-mode .card {
-    background: var(--card-bg);
-    border: 1px solid #333;
-}
-
-.dark-mode .transactions-table th {
-    background-color: #2a2a2a;
-    color: #e5e5e5;
-}
-
-.dark-mode .filters-card,
-.dark-mode .transactions-card {
-    background: var(--card-bg);
-    border: 1px solid #333;
-}
-
-.dark-mode .transactions-list th {
-    background-color: #2a2a2a;
-    color: #e5e5e5;
-}
-
-.dark-mode .transactions-list td {
-    color: #e5e5e5;
-    border-bottom-color: #333;
-}
-
-.dark-mode .form-group input,
-.dark-mode .form-group select,
-.dark-mode .form-group textarea {
-    background: #2a2a2a;
-    border-color: #444;
-    color: #e5e5e5;
-}
-
-.dark-mode .form-group input:focus,
-.dark-mode .form-group select:focus,
-.dark-mode .form-group textarea:focus {
-    border-color: var(--accent);
-}
-
-.dark-mode .modal {
-    background: var(--card-bg);
-    color: var(--text);
-}
-
-.dark-mode .loading-state,
-.dark-mode .empty-state {
-    color: #999;
 }
