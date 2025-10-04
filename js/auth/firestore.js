@@ -1,3 +1,4 @@
+
 // Crear perfil de usuario
 window.createUserProfile = async (userId, userData) => {
   try {
@@ -289,6 +290,130 @@ window.deleteTransaction = async (userId, transactionId) => {
     console.error('[Firestore] Error deleting transaction:', error);
     throw error;
   }
+};
+
+// Savings Goals Functions
+window.addSavingsGoal = async (userId, goalData) => {
+    try {
+        const docRef = await window.firebaseDb.collection('users').doc(userId).collection('savings_goals').add({
+            ...goalData,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            archived: false
+        });
+        return docRef.id;
+    } catch (error) {
+        console.error('Error adding savings goal:', error);
+        throw error;
+    }
+};
+
+window.getSavingsGoals = async (userId, includeArchived = false) => {
+    try {
+        let query = window.firebaseDb.collection('users').doc(userId).collection('savings_goals');
+        
+        if (!includeArchived) {
+            query = query.where('archived', '==', false);
+        }
+        
+        const snapshot = await query.orderBy('createdAt', 'desc').get();
+        const goals = [];
+        
+        for (const doc of snapshot.docs) {
+            const goal = { id: doc.id, ...doc.data() };
+            
+            // Load contributions for this goal
+            const contributions = await window.getGoalContributions(userId, doc.id);
+            goal.contributions = contributions;
+            goal.currentAmount = contributions.reduce((sum, contrib) => sum + contrib.amount, 0);
+            goal.progress = goal.targetAmount > 0 ? (goal.currentAmount / goal.targetAmount) * 100 : 0;
+            
+            goals.push(goal);
+        }
+        
+        return goals;
+    } catch (error) {
+        console.error('Error getting savings goals:', error);
+        throw error;
+    }
+};
+
+window.updateSavingsGoal = async (userId, goalId, goalData) => {
+    try {
+        await window.firebaseDb.collection('users').doc(userId).collection('savings_goals').doc(goalId).update({
+            ...goalData,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    } catch (error) {
+        console.error('Error updating savings goal:', error);
+        throw error;
+    }
+};
+
+window.archiveSavingsGoal = async (userId, goalId) => {
+    try {
+        await window.firebaseDb.collection('users').doc(userId).collection('savings_goals').doc(goalId).update({
+            archived: true,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    } catch (error) {
+        console.error('Error archiving savings goal:', error);
+        throw error;
+    }
+};
+
+window.deleteSavingsGoal = async (userId, goalId) => {
+    try {
+        // First delete all contributions
+        const contributions = await window.getGoalContributions(userId, goalId);
+        const deletePromises = contributions.map(contrib => 
+            window.firebaseDb.collection('users').doc(userId).collection('savings_goals')
+                .doc(goalId).collection('contributions').doc(contrib.id).delete()
+        );
+        
+        await Promise.all(deletePromises);
+        
+        // Then delete the goal
+        await window.firebaseDb.collection('users').doc(userId).collection('savings_goals').doc(goalId).delete();
+    } catch (error) {
+        console.error('Error deleting savings goal:', error);
+        throw error;
+    }
+};
+
+// Contributions Functions
+window.addSavingsContribution = async (userId, goalId, contributionData) => {
+    try {
+        const docRef = await window.firebaseDb.collection('users').doc(userId).collection('savings_goals')
+            .doc(goalId).collection('contributions').add({
+                ...contributionData,
+                date: firebase.firestore.Timestamp.fromDate(new Date(contributionData.date || new Date())),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        
+        return docRef.id;
+    } catch (error) {
+        console.error('Error adding savings contribution:', error);
+        throw error;
+    }
+};
+
+window.getGoalContributions = async (userId, goalId, limit = 10) => {
+    try {
+        const snapshot = await window.firebaseDb.collection('users').doc(userId).collection('savings_goals')
+            .doc(goalId).collection('contributions')
+            .orderBy('date', 'desc')
+            .limit(limit)
+            .get();
+        
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+    } catch (error) {
+        console.error('Error getting goal contributions:', error);
+        throw error;
+    }
 };
 
 console.log('[Firestore] Módulo de base de datos cargado');

@@ -42,6 +42,11 @@
                         <i class="fas fa-chart-bar"></i>
                         <span>Resumen Detallado</span> <!-- Now contains transactions functionality -->
                     </button>
+                    <!-- Add this new button -->
+                    <button class="nav-btn" id="savings-btn">
+                        <i class="fas fa-piggy-bank"></i>
+                        <span>Mis Ahorros</span>
+                    </button>
                     <button class="nav-btn logout" id="logout-btn">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Cerrar Sesión</span>
@@ -79,6 +84,7 @@
             const dashboardBtn = document.getElementById('dashboard-btn');
             const addTransactionBtn = document.getElementById('add-transaction-btn');
             const summaryBtn = document.getElementById('summary-btn');
+            const savingsBtn = document.getElementById('savings-btn'); // Add this
             const logoutBtn = document.getElementById('logout-btn');
 
             if (dashboardBtn) {
@@ -99,6 +105,14 @@
                 summaryBtn.addEventListener('click', function() {
                     window.location.hash = '/summary';
                     updateActiveNav('summary-btn');
+                });
+            }
+            
+            // Add this new handler
+            if (savingsBtn) {
+                savingsBtn.addEventListener('click', function() {
+                    window.location.hash = '/savings';
+                    updateActiveNav('savings-btn');
                 });
             }
             
@@ -132,6 +146,8 @@
                     activeId = 'add-transaction-btn';
                 } else if (hash === '#/summary') {
                     activeId = 'summary-btn';
+                } else if (hash === '#/savings') { // Add this condition
+                    activeId = 'savings-btn';
                 }
                 
                 updateActiveNav(activeId);
