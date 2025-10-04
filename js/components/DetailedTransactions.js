@@ -1,3 +1,4 @@
+
 // js/components/DetailedTransactions.js
 window.DetailedTransactionsComponent = {
     template: `
@@ -226,7 +227,9 @@ window.DetailedTransactionsComponent = {
             },
             showDeleteModal: false,
             transactionToDelete: null,
-            searchTimeout: null
+            searchTimeout: null,
+            authUnsubscribe: null, // Track auth listener
+            exportUrls: [] // Track created URLs for cleanup
         }
     },
     computed: {
@@ -325,7 +328,9 @@ window.DetailedTransactionsComponent = {
         debouncedSearch() {
             clearTimeout(this.searchTimeout);
             this.searchTimeout = setTimeout(() => {
-                this.loadTransactions();
+                if (this._isMounted) { // Check if component is still mounted
+                    this.loadTransactions();
+                }
             }, 500);
         },
 
@@ -436,12 +441,26 @@ window.DetailedTransactionsComponent = {
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
+            
+            // Store URL for cleanup
+            this.exportUrls.push(url);
+            
             link.setAttribute('href', url);
             link.setAttribute('download', `transacciones_${new Date().toISOString().split('T')[0]}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            
+            // Clean up URL after a reasonable time
+            setTimeout(() => {
+                this.cleanupExportUrl(url);
+            }, 60000); // Clean up after 1 minute
+        },
+        
+        cleanupExportUrl(url) {
+            URL.revokeObjectURL(url);
+            this.exportUrls = this.exportUrls.filter(u => u !== url);
         },
 
         exportToPDF() {
@@ -533,19 +552,56 @@ window.DetailedTransactionsComponent = {
         formatDate(date) {
             return window.Formatters ? window.Formatters.formatDate(date) : 
                    date ? new Intl.DateTimeFormat('es-ES').format(date) : 'Fecha no disponible';
+        },
+        
+        // Add cleanup method
+        cleanup() {
+            // Clear any pending timeouts
+            if (this.searchTimeout) {
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = null;
+            }
+            
+            // Unsubscribe from auth listener
+            if (this.authUnsubscribe) {
+                this.authUnsubscribe();
+                this.authUnsubscribe = null;
+            }
+            
+            // Clean up export URLs
+            this.exportUrls.forEach(url => {
+                URL.revokeObjectURL(url);
+            });
+            this.exportUrls = [];
         }
     },
+    
     async mounted() {
-        await new Promise((resolve) => {
-            window.setupAuthListener((user) => {
-                if (user) {
-                    resolve();
-                } else {
-                    window.location.href = "./index.html";
-                }
-            });
+        this._isMounted = true;
+        
+        // Store the unsubscribe function
+        this.authUnsubscribe = window.setupAuthListener((user) => {
+            if (user && this._isMounted) {
+                this.loadTransactions();
+            } else if (this._isMounted) {
+                window.location.href = "./index.html";
+            }
         });
         
-        await this.loadTransactions();
+        if (this._isMounted) {
+            await this.loadTransactions();
+        }
+    },
+    
+    // Vue 3 lifecycle for cleanup
+    unmounted() {
+        this._isMounted = false;
+        this.cleanup();
+    },
+    
+    // Vue 2 compatibility
+    beforeDestroy() {
+        this._isMounted = false;
+        this.cleanup();
     }
 };
