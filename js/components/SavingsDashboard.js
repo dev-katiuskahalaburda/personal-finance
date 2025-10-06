@@ -319,24 +319,8 @@ window.SavingsDashboardComponent = {
     },
     methods: {
         async loadGoals() {
-            // Clear any existing timeout
-            if (this.loadTimeout) {
-                clearTimeout(this.loadTimeout);
-            }
-            
             this.loading = true;
             this.loadError = false;
-            console.log('[SavingsDashboard] Starting to load goals...');
-            
-            // Set a timeout to prevent infinite loading
-            this.loadTimeout = setTimeout(() => {
-                if (this.loading) {
-                    console.warn('[SavingsDashboard] Load timeout reached, forcing stop');
-                    this.loading = false;
-                    this.loadError = true;
-                    alert('Tiempo de carga excedido. Por favor, recarga la página.');
-                }
-            }, 10000); // 10 second timeout
             
             try {
                 const user = window.firebaseAuth.currentUser;
@@ -346,24 +330,30 @@ window.SavingsDashboardComponent = {
                     return;
                 }
 
-                console.log('[SavingsDashboard] User authenticated:', user.uid);
-                
+                // Verify Firestore functions exist
                 if (typeof window.getSavingsGoals !== 'function') {
-                    throw new Error('getSavingsGoals function not available');
+                    throw new Error('Firestore functions not loaded. Please refresh the page.');
                 }
 
+                console.log('[SavingsDashboard] Loading goals for user:', user.uid);
                 this.goals = await window.getSavingsGoals(user.uid);
-                console.log('[SavingsDashboard] Goals loaded successfully:', this.goals);
+                console.log('[SavingsDashboard] Goals loaded:', this.goals);
                 
             } catch (error) {
                 console.error('[SavingsDashboard] Error loading goals:', error);
                 this.loadError = true;
-                alert('Error al cargar las metas: ' + (error.message || 'Error desconocido'));
                 this.goals = [];
+                
+                // More specific error messages
+                if (error.message.includes('Firestore functions not loaded')) {
+                    alert('Error: Las funciones de base de datos no están disponibles. Recarga la página.');
+                } else if (error.message.includes('network') || error.message.includes('offline')) {
+                    alert('Error de conexión. Verifica tu conexión a internet.');
+                } else {
+                    alert('Error al cargar las metas: ' + error.message);
+                }
             } finally {
                 this.loading = false;
-                clearTimeout(this.loadTimeout); // Clear the timeout
-                console.log('[SavingsDashboard] Loading completed');
             }
         },
 
@@ -561,8 +551,13 @@ window.SavingsDashboardComponent = {
         },
 
         viewAllContributions(goal) {
-            // Use window.location.hash for navigation instead of $router.push()
-            window.location.hash = `/savings/${goal.id}/contributions`;
+            // Use Vue Router navigation instead of direct hash manipulation
+            if (this.$router) {
+                this.$router.push(`/savings/${goal.id}/contributions`);
+            } else {
+                // Fallback for direct navigation
+                window.location.hash = `#/savings/${goal.id}/contributions`;
+            }
         },
         
         formatCurrency(amount) {

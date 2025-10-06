@@ -31,6 +31,8 @@
         template: `<router-view></router-view>`
     });
 
+    // Provide router to all components
+    app.provide('router', router);
     app.use(router);
     app.mount('#vue-app');
 })();
