@@ -197,6 +197,7 @@ window.ContributionsListComponent = {
             contributionToDelete: null,
             currentPage: 1,
             itemsPerPage: 10,
+            goalId: null, // Add goalId to data
             contributionForm: {
                 amount: null,
                 displayAmount: '',
@@ -208,9 +209,7 @@ window.ContributionsListComponent = {
         }
     },
     computed: {
-        goalId() {
-            return this.$route.params.goalId;
-        },
+        // Remove the goalId computed property and handle it in mounted
         totalContributions() {
             return this.contributions.reduce((total, contribution) => total + contribution.amount, 0);
         },
@@ -240,6 +239,11 @@ window.ContributionsListComponent = {
     },
     methods: {
         async loadGoalAndContributions() {
+            if (!this.goalId) {
+                console.error('No goalId available');
+                return;
+            }
+
             this.loading = true;
             try {
                 const user = window.firebaseAuth.currentUser;
@@ -268,7 +272,7 @@ window.ContributionsListComponent = {
         },
 
         goBack() {
-            window.location.hash = '/savings';
+            this.$router.push('/savings');
         },
 
         showAddContributionModal() {
@@ -454,6 +458,29 @@ window.ContributionsListComponent = {
         if (!window.firebaseAuth) {
             window.location.href = "./index.html";
             return;
+        }
+
+        // Use Vue Router's route params instead of parsing URL hash directly
+        if (this.$route && this.$route.params.goalId) {
+            this.goalId = this.$route.params.goalId;
+            console.log('Extracted goalId from route:', this.goalId);
+        } else {
+            // Fallback: Extract goalId from URL hash
+            const hash = window.location.hash;
+            console.log('Current hash:', hash);
+            
+            // Parse the goalId from the URL
+            // Expected format: #/savings/{goalId}/contributions
+            const match = hash.match(/\/savings\/([^\/]+)\/contributions/);
+            if (match && match[1]) {
+                this.goalId = match[1];
+                console.log('Extracted goalId from URL:', this.goalId);
+            } else {
+                console.error('Could not extract goalId from URL:', hash);
+                alert('Error: No se pudo identificar la meta de ahorro');
+                this.$router.push('/savings');
+                return;
+            }
         }
         
         window.setupAuthListener((user) => {

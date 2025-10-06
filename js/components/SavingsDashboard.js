@@ -517,9 +517,10 @@ window.SavingsDashboardComponent = {
         },
 
         viewAllContributions(goal) {
-        this.$router.push(`/savings/${goal.id}/contributions`);
+        // Use window.location.hash for navigation instead of $router.push()
+        window.location.hash = `/savings/${goal.id}/contributions`;
         },
-
+        
         formatCurrency(amount) {
             return window.Formatters ? window.Formatters.formatCurrency(amount) : 
                    new Intl.NumberFormat('es-PY', {

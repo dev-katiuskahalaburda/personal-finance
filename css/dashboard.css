@@ -789,7 +789,7 @@
 .goal-card.archived {
     border-left-color: #6c757d;
     opacity: 0.7;
-    background: linear-gradient(135deg, #f8f9fa 0%, var(--card-bg) 100%;
+    background: linear-gradient(135deg, #f8f9fa 0%, var(--card-bg) 100%);
 }
 
 .goal-header {
@@ -1003,10 +1003,25 @@
     align-items: center;
     gap: 8px;
     transition: background 0.3s ease;
+    font-size: 0.9rem;
 }
 
 .contributions-list .btn-back:hover {
     background: #4b5563;
+}
+
+.contributions-list .header-title {
+    flex: 1;
+}
+
+.contributions-list .header-title h2 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.contributions-list .header-title p {
+    color: #666;
+    margin: 0;
 }
 
 .contributions-list .summary-cards {
