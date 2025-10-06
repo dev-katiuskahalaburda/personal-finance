@@ -14,7 +14,11 @@ window.signUpUser = async (email, password) => {
 window.signInUser = async (email, password) => {
   try {
     const userCredential = await window.firebaseAuth.signInWithEmailAndPassword(email, password);
-    // Redirigir al dashboard después de login exitoso
+    
+    // WAIT for auth state to persist before redirecting
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    console.log('[Auth] Login successful, redirecting to dashboard');
     window.location.href = 'dashboard.html';
     return userCredential;
   } catch (error) {

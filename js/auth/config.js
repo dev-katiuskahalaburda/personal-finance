@@ -1,3 +1,4 @@
+// js/auth/config.js
 // Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAVT7HgUQRDj9gCatGK7rKqfwNgewoDJxE",
@@ -14,23 +15,24 @@ const app = firebase.initializeApp(firebaseConfig);
 // Exportación mediante window
 window.firebaseApp = app;
 window.firebaseAuth = firebase.auth();
-window.firestore = firebase.firestore();
+window.firebaseDb = firebase.firestore(); // FIXED: Changed from window.firestore to window.firebaseDb
 
-// CRITICAL FIX: Set auth persistence to LOCAL
+console.log('[Config] Firebase inicializado correctamente');
+
+// CRITICAL FIX: Proper auth persistence setup
 window.firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
   .then(() => {
     console.log('[Config] Auth persistence set to LOCAL');
     
-    // Check if user is already logged in
-    const currentUser = window.firebaseAuth.currentUser;
-    if (currentUser) {
-      console.log('[Config] User already authenticated:', currentUser.email);
-    } else {
-      console.log('[Config] No user currently authenticated');
-    }
+    // Check current auth state
+    return new Promise((resolve) => {
+      const unsubscribe = window.firebaseAuth.onAuthStateChanged((user) => {
+        console.log('[Config] Initial auth state check:', user ? user.email : 'No user');
+        unsubscribe(); // Stop listening after first check
+        resolve(user);
+      });
+    });
   })
   .catch((error) => {
     console.error('[Config] Error setting auth persistence:', error);
   });
-
-console.log('[Config] Firebase inicializado correctamente');
