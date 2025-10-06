@@ -1,0 +1,232 @@
+/* Enhanced mobile sidebar - Icons Only */
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 100%;
+    }
+
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: auto;
+        padding: 0.5rem;
+        flex-direction: row;
+        justify-content: space-around;
+        z-index: 100;
+        padding-top: 0.5rem;
+        background-color: var(--primary);
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .sidebar nav {
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    .nav-btn {
+        flex-direction: column;
+        padding: 0.5rem;
+        font-size: 0.7rem;
+        gap: 0.25rem;
+        min-width: auto;
+        flex: 1;
+        margin: 0 0.125rem;
+        border-radius: 8px;
+        min-height: 60px; /* Ensure touch target size */
+    }
+
+    .nav-btn i {
+        font-size: 1.2rem; /* Slightly larger icons */
+        margin-bottom: 0;
+    }
+
+    .nav-btn span {
+        display: none; /* Hide text labels on mobile */
+    }
+
+    /* Active state for mobile */
+    .nav-btn.active {
+        background-color: var(--secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+    }
+
+    .nav-btn.active i {
+        color: var(--text-light);
+    }
+
+    .main-layout {
+        margin-left: 0;
+        margin-bottom: 80px; /* Increased space for bottom navbar */
+        width: 100%;
+        padding: 0.5rem;
+    }
+
+    /* Switch to card view on mobile */
+    .responsive-table {
+        display: none;
+    }
+
+    .card-list {
+        display: flex;
+    }
+
+    /* Hide table headers when card list is shown */
+    .list-body table {
+        display: none;
+    }
+}
+
+/* Additional mobile optimization for very small screens */
+@media (max-width: 380px) {
+    .nav-btn {
+        padding: 0.4rem;
+        min-height: 55px;
+    }
+    
+    .nav-btn i {
+        font-size: 1.1rem;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-header, .card-body {
+        padding: 1rem;
+    }
+
+    .transactions-list {
+        min-width: 500px;
+    }
+
+    .transactions-table,
+    .contributions-table {
+        min-width: 500px;
+    }
+    
+    .transactions-table th,
+    .transactions-table td,
+    .contributions-table th,
+    .contributions-table td {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .export-actions {
+        justify-content: center;
+    }
+    
+    .transactions-table {
+        font-size: 0.8rem;
+    }
+    
+    .actions {
+        flex-direction: column;
+    }
+
+    .form-container {
+        padding: 1rem;
+    }
+    
+    .transaction-form {
+        padding: 1.5rem;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        padding: 0.875rem 1rem;
+        font-size: 1rem;
+    }
+
+    .savings-summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .goals-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .goal-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .goal-actions {
+        align-self: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-btn i {
+        font-size: 1.1rem;
+    }
+    
+    .amount {
+        font-size: 1.6rem; /* reducido */
+    }
+
+    .transactions-table,
+    .contributions-table {
+        min-width: 400px;
+    }
+    
+    /* Compact table cells */
+    .transactions-table th,
+    .transactions-table td,
+    .contributions-table th,
+    .contributions-table td {
+        padding: 0.4rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Compact action buttons */
+    .actions {
+        gap: 0.25rem;
+    }
+    
+    .btn-edit, .btn-delete, .btn-save, .btn-cancel {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+
+    .goal-card {
+        padding: 1rem;
+    }
+    
+    .goal-actions {
+        gap: 0.25rem;
+    }
+    
+    .btn-contribute, .btn-edit, .btn-delete {
+        padding: 0.4rem;
+    }
+}
+
+/* Compact cards for very small screens */
+@media (max-width: 380px) {
+    .list-card {
+        padding: 0.75rem;
+    }
+    
+    .list-card-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .list-card-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .list-card-actions {
+        justify-content: center;
+    }
+}

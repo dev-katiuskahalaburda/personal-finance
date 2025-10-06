@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Spend</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="./css/dashboard.css">
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <!-- Firebase SDK -->
@@ -32,8 +33,13 @@
             <aside class="sidebar">
                 <nav>
                     <button class="nav-btn active" id="dashboard-btn">
-                        <i class="fas fa-home"></i> <!-- Changed icon -->
-                        <span>Inicio</span> <!-- Changed text -->
+                        <i class="fas fa-home"></i>
+                        <span>Inicio</span>
+                    </button>
+                    <!-- Moved Savings to second position -->
+                    <button class="nav-btn" id="savings-btn">
+                        <i class="fas fa-piggy-bank"></i>
+                        <span>Mis Ahorros</span>
                     </button>
                     <button class="nav-btn" id="add-transaction-btn">
                         <i class="fas fa-plus-circle"></i>
@@ -41,12 +47,7 @@
                     </button>
                     <button class="nav-btn" id="summary-btn">
                         <i class="fas fa-chart-bar"></i>
-                        <span>Resumen Detallado</span> <!-- Now contains transactions functionality -->
-                    </button>
-                    <!-- Add this new button -->
-                    <button class="nav-btn" id="savings-btn">
-                        <i class="fas fa-piggy-bank"></i>
-                        <span>Mis Ahorros</span>
+                        <span>Resumen Detallado</span>
                     </button>
                     <button class="nav-btn logout" id="logout-btn">
                         <i class="fas fa-sign-out-alt"></i>
@@ -84,15 +85,22 @@
         // Navigation handlers
         document.addEventListener('DOMContentLoaded', function() {
             const dashboardBtn = document.getElementById('dashboard-btn');
+            const savingsBtn = document.getElementById('savings-btn');
             const addTransactionBtn = document.getElementById('add-transaction-btn');
             const summaryBtn = document.getElementById('summary-btn');
-            const savingsBtn = document.getElementById('savings-btn'); // Add this
             const logoutBtn = document.getElementById('logout-btn');
 
             if (dashboardBtn) {
                 dashboardBtn.addEventListener('click', function() {
                     window.location.hash = '/';
                     updateActiveNav('dashboard-btn');
+                });
+            }
+            
+            if (savingsBtn) {
+                savingsBtn.addEventListener('click', function() {
+                    window.location.hash = '/savings';
+                    updateActiveNav('savings-btn');
                 });
             }
             
@@ -107,14 +115,6 @@
                 summaryBtn.addEventListener('click', function() {
                     window.location.hash = '/summary';
                     updateActiveNav('summary-btn');
-                });
-            }
-            
-            // Add this new handler
-            if (savingsBtn) {
-                savingsBtn.addEventListener('click', function() {
-                    window.location.hash = '/savings';
-                    updateActiveNav('savings-btn');
                 });
             }
             
@@ -144,12 +144,12 @@
                 const hash = window.location.hash;
                 let activeId = 'dashboard-btn';
                 
-                if (hash === '#/add-transaction') {
+                if (hash === '#/savings') {
+                    activeId = 'savings-btn';
+                } else if (hash === '#/add-transaction') {
                     activeId = 'add-transaction-btn';
                 } else if (hash === '#/summary') {
                     activeId = 'summary-btn';
-                } else if (hash === '#/savings') { // Add this condition
-                    activeId = 'savings-btn';
                 }
                 
                 updateActiveNav(activeId);
