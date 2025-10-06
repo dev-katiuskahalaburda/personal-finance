@@ -9,13 +9,16 @@ window.AuthManager = {
     init() {
         console.log('[AuthManager] Initializing...');
         
-        // Wait for Firebase to be ready
-        if (!window.firebaseAuth) {
-            console.error('[AuthManager] Firebase Auth not available');
-            return;
-        }
-        
-        this.setupAuthListener();
+        // Wait a bit for Firebase to be ready, then setup listener
+        setTimeout(() => {
+            if (!window.firebaseAuth) {
+                console.error('[AuthManager] Firebase Auth not available');
+                return;
+            }
+            
+            console.log('[AuthManager] Firebase Auth available, setting up listener');
+            this.setupAuthListener();
+        }, 100);
     },
     
     // Centralized auth listener

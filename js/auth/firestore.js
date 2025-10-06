@@ -1,4 +1,3 @@
-
 // Crear perfil de usuario
 window.createUserProfile = async (userId, userData) => {
   try {
@@ -292,10 +291,10 @@ window.deleteTransaction = async (userId, transactionId) => {
   }
 };
 
-// Savings Goals Functions
+// Savings Goals Functions - FIXED COLLECTION NAMES
 window.addSavingsGoal = async (userId, goalData) => {
     try {
-        const docRef = await window.firebaseDb.collection('users').doc(userId).collection('savings_goals').add({
+        const docRef = await window.firebaseDb.collection('users').doc(userId).collection('savingsGoals').add({
             ...goalData,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -310,7 +309,7 @@ window.addSavingsGoal = async (userId, goalData) => {
 
 window.getSavingsGoals = async (userId, includeArchived = false) => {
     try {
-        let query = window.firebaseDb.collection('users').doc(userId).collection('savings_goals');
+        let query = window.firebaseDb.collection('users').doc(userId).collection('savingsGoals');
         
         if (!includeArchived) {
             query = query.where('archived', '==', false);
@@ -340,7 +339,7 @@ window.getSavingsGoals = async (userId, includeArchived = false) => {
 
 window.updateSavingsGoal = async (userId, goalId, goalData) => {
     try {
-        await window.firebaseDb.collection('users').doc(userId).collection('savings_goals').doc(goalId).update({
+        await window.firebaseDb.collection('users').doc(userId).collection('savingsGoals').doc(goalId).update({
             ...goalData,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -352,7 +351,7 @@ window.updateSavingsGoal = async (userId, goalId, goalData) => {
 
 window.archiveSavingsGoal = async (userId, goalId) => {
     try {
-        await window.firebaseDb.collection('users').doc(userId).collection('savings_goals').doc(goalId).update({
+        await window.firebaseDb.collection('users').doc(userId).collection('savingsGoals').doc(goalId).update({
             archived: true,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -367,14 +366,14 @@ window.deleteSavingsGoal = async (userId, goalId) => {
         // First delete all contributions
         const contributions = await window.getGoalContributions(userId, goalId);
         const deletePromises = contributions.map(contrib => 
-            window.firebaseDb.collection('users').doc(userId).collection('savings_goals')
+            window.firebaseDb.collection('users').doc(userId).collection('savingsGoals')
                 .doc(goalId).collection('contributions').doc(contrib.id).delete()
         );
         
         await Promise.all(deletePromises);
         
         // Then delete the goal
-        await window.firebaseDb.collection('users').doc(userId).collection('savings_goals').doc(goalId).delete();
+        await window.firebaseDb.collection('users').doc(userId).collection('savingsGoals').doc(goalId).delete();
     } catch (error) {
         console.error('Error deleting savings goal:', error);
         throw error;
@@ -384,7 +383,7 @@ window.deleteSavingsGoal = async (userId, goalId) => {
 // Contributions Functions
 window.addSavingsContribution = async (userId, goalId, contributionData) => {
     try {
-        const docRef = await window.firebaseDb.collection('users').doc(userId).collection('savings_goals')
+        const docRef = await window.firebaseDb.collection('users').doc(userId).collection('savingsGoals')
             .doc(goalId).collection('contributions').add({
                 ...contributionData,
                 date: firebase.firestore.Timestamp.fromDate(new Date(contributionData.date || new Date())),
@@ -400,7 +399,7 @@ window.addSavingsContribution = async (userId, goalId, contributionData) => {
 
 window.getGoalContributions = async (userId, goalId, limit = 10) => {
     try {
-        const snapshot = await window.firebaseDb.collection('users').doc(userId).collection('savings_goals')
+        const snapshot = await window.firebaseDb.collection('users').doc(userId).collection('savingsGoals')
             .doc(goalId).collection('contributions')
             .orderBy('date', 'desc')
             .limit(limit)

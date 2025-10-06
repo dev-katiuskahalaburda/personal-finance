@@ -17,6 +17,9 @@ window.firebaseApp = app;
 window.firebaseAuth = firebase.auth();
 window.firebaseDb = firebase.firestore(); // FIXED: Changed from window.firestore to window.firebaseDb
 
+// In config.js - Add this line after the existing exports
+window.firebaseFirestore = firebase.firestore(); // Add this for compatibility
+
 console.log('[Config] Firebase inicializado correctamente');
 
 // CRITICAL FIX: Proper auth persistence setup
