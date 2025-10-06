@@ -68,7 +68,7 @@ window.SavingsDashboardComponent = {
                 <!-- Goals Grid -->
                 <div v-else class="goals-grid">
                     <div v-for="goal in goals" :key="goal.id" 
-                         class="goal-card" :class="{ completed: goal.progress >= 100, archived: goal.archived }">
+                         class="goal-card" :class="{ completed: goal.progress >= 100 }">
                         
                         <div class="goal-header">
                             <h4>{{ goal.name }}</h4>
@@ -125,16 +125,9 @@ window.SavingsDashboardComponent = {
                             </button>
                         </div>
 
-                        <!-- Archive button for completed goals -->
-                        <div v-if="goal.progress >= 100 && !goal.archived" class="goal-footer">
-                            <button @click="archiveGoal(goal.id)" class="btn-secondary">
-                                <i class="fas fa-archive"></i> Archivar
-                            </button>
-                        </div>
-
-                        <!-- Archived badge -->
-                        <div v-if="goal.archived" class="goal-footer">
-                            <span class="archived-badge">Archivado</span>
+                        <!-- Completed badge -->
+                        <div v-if="goal.progress >= 100" class="goal-footer">
+                            <span class="completed-badge">¡Completado!</span>
                         </div>
                     </div>
                 </div>
@@ -255,10 +248,10 @@ window.SavingsDashboardComponent = {
             return this.goals.reduce((total, goal) => total + (goal.currentAmount || 0), 0);
         },
         activeGoalsCount() {
-            return this.goals.filter(goal => (goal.progress || 0) < 100 && !goal.archived).length;
+            return this.goals.filter(goal => (goal.progress || 0) < 100).length;
         },
         completedGoalsCount() {
-            return this.goals.filter(goal => (goal.progress || 0) >= 100 && !goal.archived).length;
+            return this.goals.filter(goal => (goal.progress || 0) >= 100).length;
         },
         remainingAmount() {
             if (!this.selectedGoal) return 0;
@@ -277,25 +270,12 @@ window.SavingsDashboardComponent = {
 
                 console.log('[SavingsDashboard] Loading goals for user:', user.uid);
                 
-                // Wait a bit for Firebase to be ready if needed
-                if (!window.firebaseDb) {
-                    console.log('[SavingsDashboard] Firebase not ready, waiting...');
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                }
-
                 this.goals = await window.getSavingsGoals(user.uid);
                 console.log('[SavingsDashboard] Goals loaded:', this.goals);
                 
             } catch (error) {
                 console.error('Error loading goals:', error);
-                
-                // More specific error messages
-                if (error.code === 'failed-precondition') {
-                    alert('Error: Se necesita un índice de Firestore. Esto puede tomar unos minutos en configurarse automáticamente.');
-                } else {
-                    alert('Error al cargar las metas: ' + (error.message || 'Error desconocido'));
-                }
-                
+                alert('Error al cargar las metas: ' + (error.message || 'Error desconocido'));
                 this.goals = [];
             } finally {
                 this.loading = false;
@@ -343,7 +323,7 @@ window.SavingsDashboardComponent = {
                     await window.addSavingsGoal(user.uid, this.goalForm);
                 }
                 
-                await this.loadGoals(); // Reload to get updated data
+                await this.loadGoals();
                 this.closeGoalModal();
                 
             } catch (error) {
@@ -398,10 +378,8 @@ window.SavingsDashboardComponent = {
                     description: `Aporte a meta: ${this.selectedGoal.name}`
                 };
 
-                // Add contribution to Firestore
                 await window.addSavingsContribution(user.uid, this.selectedGoal.id, contributionData);
 
-                // Reload goals to get updated progress
                 await this.loadGoals();
                 this.closeContributionModal();
                 
@@ -429,21 +407,6 @@ window.SavingsDashboardComponent = {
             return true;
         },
 
-        async archiveGoal(goalId) {
-            try {
-                const user = window.firebaseAuth.currentUser;
-                if (!user) throw new Error('Usuario no autenticado');
-
-                await window.archiveSavingsGoal(user.uid, goalId);
-                
-                // Reload goals to reflect the archive status
-                await this.loadGoals();
-            } catch (error) {
-                console.error('Error archiving goal:', error);
-                alert('Error al archivar la meta: ' + error.message);
-            }
-        },
-
         confirmDeleteGoal(goal) {
             this.goalToDelete = goal;
             this.showDeleteModal = true;
@@ -461,7 +424,6 @@ window.SavingsDashboardComponent = {
 
                 await window.deleteSavingsGoal(user.uid, this.goalToDelete.id);
                 
-                // Reload goals to reflect the deletion
                 await this.loadGoals();
                 this.showDeleteModal = false;
                 this.goalToDelete = null;
@@ -472,7 +434,6 @@ window.SavingsDashboardComponent = {
         },
 
         viewAllContributions(goal) {
-            // For now, just show an alert. Could be expanded to show a detailed modal
             alert(`Mostrando todos los aportes para: ${goal.name}`);
         },
 
@@ -500,14 +461,12 @@ window.SavingsDashboardComponent = {
     },
 
     async mounted() {
-        // Add this check to all components
         if (!window.firebaseAuth) {
             console.error('Firebase not initialized - redirecting to login');
             window.location.href = "./index.html";
             return;
         }
         
-        // Setup auth listener
         window.setupAuthListener((user) => {
             if (user) {
                 this.loadGoals();

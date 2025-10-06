@@ -1,3 +1,4 @@
+// firestore.js
 // Crear perfil de usuario
 window.createUserProfile = async (userId, userData) => {
   try {
@@ -291,58 +292,68 @@ window.deleteTransaction = async (userId, transactionId) => {
   }
 };
 
-// Savings Goals Functions - FIXED QUERIES
+// Savings Goals Functions - UPDATED (removed archived functionality)
 window.addSavingsGoal = async (userId, goalData) => {
     try {
         console.log('[Firestore] Adding savings goal for user:', userId, goalData);
         
-        const docRef = await window.firebaseDb.collection('users').doc(userId).collection('savingsGoals').add({
-            ...goalData,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            archived: false
-        });
+        const goalRef = window.firebaseDb.collection('users').doc(userId).collection('savingsGoals').doc();
         
-        console.log('[Firestore] Savings goal added with ID:', docRef.id);
-        return docRef.id;
+        const goal = {
+            id: goalRef.id,
+            name: goalData.name,
+            targetAmount: Number(goalData.targetAmount),
+            currentAmount: 0,
+            targetDate: firebase.firestore.Timestamp.fromDate(new Date(goalData.targetDate)),
+            description: goalData.description || '',
+            progress: 0,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            // Removed archived field
+        };
+        
+        await goalRef.set(goal);
+        console.log('[Firestore] Savings goal added with ID:', goalRef.id);
+        return goalRef.id;
     } catch (error) {
         console.error('Error adding savings goal:', error);
         throw error;
     }
 };
 
-window.getSavingsGoals = async (userId, includeArchived = false) => {
+window.getSavingsGoals = async (userId) => {
     try {
         console.log('[Firestore] Getting savings goals for user:', userId);
         
-        let query = window.firebaseDb.collection('users')
+        // Remove archived filtering from query
+        const snapshot = await window.firebaseDb.collection('users')
             .doc(userId)
-            .collection('savingsGoals');
+            .collection('savingsGoals')
+            .orderBy('createdAt', 'desc')
+            .get();
         
-        if (!includeArchived) {
-            query = query.where('archived', '==', false);
-        }
-        
-        // Order by creation date, newest first
-        query = query.orderBy('createdAt', 'desc');
-        
-        const snapshot = await query.get();
         console.log(`[Firestore] Found ${snapshot.size} savings goals`);
         
         const goals = [];
         
         for (const doc of snapshot.docs) {
             try {
-                const goal = { 
-                    id: doc.id, 
-                    ...doc.data() 
-                };
+                const data = doc.data();
                 
                 // Load contributions for this goal
                 const contributions = await window.getGoalContributions(userId, doc.id);
-                goal.contributions = contributions;
-                goal.currentAmount = contributions.reduce((sum, contrib) => sum + contrib.amount, 0);
-                goal.progress = goal.targetAmount > 0 ? (goal.currentAmount / goal.targetAmount) * 100 : 0;
+                
+                // Calculate current amount and progress
+                const currentAmount = contributions.reduce((sum, contrib) => sum + contrib.amount, 0);
+                const progress = data.targetAmount > 0 ? (currentAmount / data.targetAmount) * 100 : 0;
+                
+                const goal = { 
+                    id: doc.id, 
+                    ...data,
+                    contributions: contributions,
+                    currentAmount: currentAmount,
+                    progress: progress
+                };
                 
                 goals.push(goal);
             } catch (goalError) {
@@ -374,21 +385,7 @@ window.updateSavingsGoal = async (userId, goalId, goalData) => {
     }
 };
 
-window.archiveSavingsGoal = async (userId, goalId) => {
-    try {
-        console.log('[Firestore] Archiving savings goal:', { userId, goalId });
-        
-        await window.firebaseDb.collection('users').doc(userId).collection('savingsGoals').doc(goalId).update({
-            archived: true,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
-        console.log('[Firestore] Savings goal archived successfully');
-    } catch (error) {
-        console.error('Error archiving savings goal:', error);
-        throw error;
-    }
-};
+// Removed archiveSavingsGoal function entirely
 
 window.deleteSavingsGoal = async (userId, goalId) => {
     try {
