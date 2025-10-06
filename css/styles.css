@@ -5,40 +5,39 @@
     box-sizing: border-box;
 }
 
-/* inicio de styles.css */
-html, body {
-    height: 100%;
+/* Variables CSS consistentes con dashboard.css */
+:root {
+    --primary: #1d114f;
+    --secondary: #2a1e6a;
+    --accent: #6a5acd;
+    --text: #333;
+    --text-light: #fff;
+    --bg: #f2f4f7;
+    --card-bg: #fff;
+    --income: #28a745;
+    --expense: #dc3545;
 }
-
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Usa toda la altura visible */
-}
-
-/* Contenedor principal que crece para empujar el footer */
-main {
-    flex: 1;
-}
-
 
 /* Fuente y fondo general */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #d9c6dc; /* Morado claro  */
-    color: #000;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-/* Hero (logo + título) */
+/* Hero (logo + título) - Manteniendo el layout pero con colores actualizados */
 .hero {
-    background-color: #0b0333; /* Azul oscuro */
+    background-color: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px 0;
     text-align: center;
     flex-wrap: wrap;
-
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .hero .logo img {
@@ -47,7 +46,7 @@ body {
 }
 
 .hero-text {
-    color: #eee;
+    color: var(--text-light);
     margin-left: 20px;
 }
 
@@ -58,88 +57,74 @@ body {
 
 .hero-text p {
     font-size: 0.9rem;
-    color: #c7c7c7;
+    color: rgba(255, 255, 255, 0.8);
 }
 
-/* Contenedor del login */
+/* Contenedor del login/registro - Estilo más moderno */
 #login-container {
- 
     max-width: 500px;
     margin: 30px auto;
     padding: 20px;
     text-align: center;
+    flex: 1;
 }
 
 #login-container h2 {
     font-size: 1.5rem;
     margin-bottom: 20px;
+    color: var(--primary);
 }
 
-/* Formulario LOGIN*/
-#login-form {
+/* Formularios - Estilo más consistente con dashboard */
+#login-form, #signup-form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
     text-align: left;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-#login-form label {
-    font-weight: bold;
+#login-form label, #signup-form label {
+    font-weight: 600;
     font-size: 0.95rem;
+    color: var(--text);
 }
 
-#login-form input {
+#login-form input, #signup-form input {
     padding: 12px;
-    border: none;
-    background-color: white;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
     font-size: 0.95rem;
+    background: white;
+    transition: border-color 0.3s ease;
 }
 
-#login-form button {
-    background-color: #0b0333;
-    color: white;
+#login-form input:focus, #signup-form input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.1);
+}
+
+#login-form button, #signup-form button {
+    background-color: var(--primary);
+    color: var(--text-light);
     padding: 12px;
     font-size: 1rem;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
     margin-top: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-#login-form button:hover {
-    background-color: #1a0a55;
-}
-/* Formulario REGISTRO*/
-#signup-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    text-align: left;
-}
-
-#signup-form label {
-    font-weight: bold;
-    font-size: 0.95rem;
-}
-
-#signup-form input {
-    padding: 12px;
-    border: none;
-    background-color: rgb(255, 255, 255);
-    font-size: 0.95rem;
-}
-
-#signup-form button {
-    background-color: #0b0333;
-    color: rgba(255, 255, 255);
-    padding: 12px;
-    font-size: 1rem;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-#singup-form button:hover {
-    background-color: #1a0a55;
+#login-form button:hover, #signup-form button:hover {
+    background-color: var(--secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Texto registro */
@@ -149,21 +134,57 @@ body {
 }
 
 .register-text a {
-    color: rgb(0, 4, 255);
+    color: var(--accent);
     text-decoration: underline;
+    font-weight: 500;
+}
+
+.register-text a:hover {
+    color: var(--secondary);
 }
 
 /* Footer */
 footer {
-    background-color: #0b0333;
-    color: white;
+    background-color: var(--primary);
+    color: var(--text-light);
     text-align: center;
     padding: 15px 10px;
     font-size: 0.85rem;
-    /* margin-top: 20px;  Elimina este margen */
     width: 100%;
 }
 
 footer p {
     margin: 5px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero {
+        padding: 15px 0;
+        flex-direction: column;
+    }
+    
+    .hero-text {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    
+    #login-container {
+        margin: 20px auto;
+        padding: 15px;
+    }
+    
+    #login-form, #signup-form {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-text h1 {
+        font-size: 1.5rem;
+    }
+    
+    #login-container h2 {
+        font-size: 1.3rem;
+    }
 }
