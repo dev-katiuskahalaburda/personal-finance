@@ -32,35 +32,65 @@ window.DashboardComponent = {
                     </div>
                 </div>
 
-                <!-- Recent Transactions -->
-                <div class="card transactions-table">
-                    <div class="card-header">
+                <!-- Recent Transactions - UPDATED -->
+                <div class="list-container">
+                    <div class="list-header">
                         <h2>Últimos Movimientos</h2>
                     </div>
-                    <div class="card-body">
+                    <div class="list-body">
                         <div v-if="transactions.length === 0" class="empty-state">
-                            No hay transacciones recientes
+                            <i class="fas fa-receipt"></i>
+                            <p>No hay transacciones recientes</p>
                         </div>
-                        <table v-else class="transactions-list">
-                            <thead>
-                                <tr>
-                                    <th>Descripción</th>
-                                    <th>Categoría</th>
-                                    <th>Monto</th>
-                                    <th>Fecha</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="transaction in transactions" :key="transaction.id">
-                                    <td>{{ transaction.name || 'Sin descripción' }}</td>
-                                    <td>{{ transaction.category || 'Sin categoría' }}</td>
-                                    <td :class="transaction.type">
-                                        {{ transaction.type === 'income' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
-                                    </td>
-                                    <td>{{ formatDate(transaction.date) }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                        <template v-else>
+                            <!-- Desktop Table -->
+                            <div class="scrollable-container desktop-view">
+                                <table class="responsive-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Descripción</th>
+                                            <th>Categoría</th>
+                                            <th>Monto</th>
+                                            <th>Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="transaction in transactions" :key="transaction.id">
+                                            <td>{{ transaction.name || 'Sin descripción' }}</td>
+                                            <td>{{ transaction.category || 'Sin categoría' }}</td>
+                                            <td :class="transaction.type">
+                                                {{ transaction.type === 'income' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
+                                            </td>
+                                            <td>{{ formatDate(transaction.date) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Mobile Card List -->
+                            <div class="card-list mobile-view">
+                                <div v-for="transaction in transactions" :key="transaction.id" 
+                                     class="list-card">
+                                    <div class="list-card-header">
+                                        <h4 class="list-card-title">{{ transaction.name || 'Sin descripción' }}</h4>
+                                        <span class="list-card-amount" :class="transaction.type">
+                                            {{ transaction.type === 'income' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
+                                        </span>
+                                    </div>
+                                    <div class="list-card-details">
+                                        <div class="list-card-detail">
+                                            <i class="fas fa-tag"></i>
+                                            <span>{{ transaction.category || 'Sin categoría' }}</span>
+                                        </div>
+                                        <div class="list-card-detail">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>{{ formatDate(transaction.date) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>

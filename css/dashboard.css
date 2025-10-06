@@ -1166,3 +1166,412 @@
         grid-column: 1 / 3; 
     }
 }
+
+/* Mobile Implementations */
+/* Mobile-First List Components */
+.list-container {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.list-header {
+    padding: 1rem 1.2rem;
+    background-color: var(--primary);
+    color: var(--text-light);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.list-header h2,
+.list-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.list-body {
+    padding: 0;
+    position: relative;
+}
+
+/* Horizontal scrolling for all list containers */
+.scrollable-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Consistent table styling */
+.responsive-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Minimum width before scrolling */
+}
+
+.responsive-table th,
+.responsive-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+}
+
+.responsive-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: var(--text);
+    position: sticky;
+    left: 0;
+}
+
+.responsive-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Compact table variant for mobile */
+.responsive-table.compact th,
+.responsive-table.compact td {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+}
+
+/* Card grid for mobile-friendly lists */
+.card-list {
+    display: none; /* Hidden by default, shown on mobile */
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+.list-card {
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.list-card-header {
+    display: flex;
+    justify-content: between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.list-card-title {
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0;
+    flex: 1;
+}
+
+.list-card-amount {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.list-card-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.list-card-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.list-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    justify-content: flex-end;
+}
+
+/* Enhanced mobile sidebar */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: auto;
+        padding: 0.5rem;
+        flex-direction: row;
+        justify-content: space-around;
+        z-index: 100;
+        padding-top: 0.5rem;
+    }
+
+    .sidebar nav {
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .nav-btn {
+        flex-direction: column;
+        padding: 0.5rem;
+        font-size: 0.7rem;
+        gap: 0.25rem;
+        min-width: auto;
+        flex: 1;
+        margin: 0 0.25rem;
+    }
+
+    .nav-btn i {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .nav-btn span {
+        font-size: 0.65rem;
+        text-align: center;
+    }
+
+    .main-layout {
+        margin-left: 0;
+        margin-bottom: 70px; /* Space for bottom navbar */
+        width: 100%;
+        padding: 0.5rem;
+    }
+
+    /* Switch to card view on mobile */
+    .responsive-table {
+        display: none;
+    }
+
+    .card-list {
+        display: flex;
+    }
+
+    /* Hide table headers when card list is shown */
+    .list-body table {
+        display: none;
+    }
+
+    /* Compact cards for very small screens */
+    @media (max-width: 380px) {
+        .list-card-details {
+            grid-template-columns: 1fr;
+        }
+        
+        .list-card-actions {
+            flex-direction: column;
+        }
+        
+        .list-card-actions button {
+            width: 100%;
+        }
+    }
+}
+
+/* Desktop: Show tables, hide cards */
+@media (min-width: 769px) {
+    .responsive-table {
+        display: table;
+    }
+    
+    .card-list {
+        display: none;
+    }
+}
+
+/* Enhanced responsive utilities */
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block;
+    }
+    
+    .desktop-only {
+        display: none;
+    }
+}
+
+/* Improved modal for mobile */
+@media (max-width: 768px) {
+    .modal {
+        width: 95%;
+        margin: 1rem;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .modal-actions button {
+        width: 100%;
+    }
+}
+
+/* Touch-friendly button sizes */
+@media (max-width: 768px) {
+    .btn-primary,
+    .btn-secondary {
+        padding: 1rem;
+        min-height: 44px; /* Minimum touch target size */
+    }
+    
+    .btn-edit, 
+    .btn-delete, 
+    .btn-save, 
+    .btn-cancel {
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Loading states */
+.skeleton-loader {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-title {
+    height: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Additional utility classes */
+.full-width {
+    width: 100% !important;
+}
+
+.contributions-list-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.contribution-item-mini {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+    font-size: 0.8rem;
+}
+
+.contribution-date {
+    color: #666;
+    font-size: 0.75rem;
+}
+
+/* Enhanced mobile editing */
+.list-card .edit-input,
+.list-card .edit-select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.list-card .full-width {
+    grid-column: 1 / -1;
+}
+
+/* Improved empty states */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+/* Enhanced loading states */
+.loading-state {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}
+
+.loading-state i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+/* Better mobile navigation active states */
+@media (max-width: 768px) {
+    .nav-btn.active {
+        background-color: var(--secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+    }
+}
+
+/* Improved card shadows for better hierarchy */
+.list-container {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.list-card {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: box-shadow 0.2s ease;
+}
+
+.list-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Better color consistency */
+.positive {
+    color: var(--income) !important;
+}
+
+.negative {
+    color: var(--expense) !important;
+}
+
+.income .list-card-amount {
+    color: var(--income) !important;
+}
+
+.expense .list-card-amount {
+    color: var(--expense) !important;
+}

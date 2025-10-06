@@ -57,60 +57,97 @@ window.ContributionsListComponent = {
                 <p>Cargando aportes...</p>
             </div>
 
-            <!-- Contributions Table -->
-            <div v-else class="contributions-table-container">
-                <div class="table-header">
+            <!-- Contributions List -->
+            <div v-else class="list-container">
+                <div class="list-header">
                     <h3>Historial de Aportes</h3>
                     <div class="table-actions">
                         <button @click="exportToCSV" class="btn-secondary" :disabled="contributions.length === 0">
-                            <i class="fas fa-download"></i> Exportar CSV
+                            <i class="fas fa-download"></i> 
+                            <span class="desktop-only">Exportar CSV</span>
                         </button>
                     </div>
                 </div>
 
-                <div v-if="contributions.length === 0" class="empty-state">
-                    <i class="fas fa-piggy-bank"></i>
-                    <p>No hay aportes registrados para esta meta</p>
-                    <button @click="showAddContributionModal" class="btn-primary">
-                        Añadir primer aporte
-                    </button>
-                </div>
+                <div class="list-body">
+                    <div v-if="contributions.length === 0" class="empty-state">
+                        <i class="fas fa-piggy-bank"></i>
+                        <p>No hay aportes registrados para esta meta</p>
+                        <button @click="showAddContributionModal" class="btn-primary">
+                            Añadir primer aporte
+                        </button>
+                    </div>
 
-                <table v-else class="contributions-table">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Monto</th>
-                            <th>Descripción</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="contribution in sortedContributions" :key="contribution.id">
-                            <td>{{ formatDate(contribution.date) }}</td>
-                            <td class="amount positive">{{ formatCurrency(contribution.amount) }}</td>
-                            <td>{{ contribution.description || 'Aporte a meta' }}</td>
-                            <td class="actions">
-                                <button @click="editContribution(contribution)" class="btn-edit" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button @click="confirmDeleteContribution(contribution)" class="btn-delete" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <template v-else>
+                        <!-- Desktop Table -->
+                        <div class="scrollable-container desktop-view">
+                            <table class="responsive-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Monto</th>
+                                        <th>Descripción</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="contribution in paginatedContributions" :key="contribution.id">
+                                        <td>{{ formatDate(contribution.date) }}</td>
+                                        <td class="amount positive">{{ formatCurrency(contribution.amount) }}</td>
+                                        <td>{{ contribution.description || 'Aporte a meta' }}</td>
+                                        <td class="actions">
+                                            <button @click="editContribution(contribution)" class="btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button @click="confirmDeleteContribution(contribution)" class="btn-delete" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                <!-- Pagination (if needed in the future) -->
-                <div v-if="contributions.length > 10" class="pagination">
-                    <button class="btn-pagination" :disabled="currentPage === 1" @click="previousPage">
-                        <i class="fas fa-chevron-left"></i> Anterior
-                    </button>
-                    <span>Página {{ currentPage }} de {{ totalPages }}</span>
-                    <button class="btn-pagination" :disabled="currentPage === totalPages" @click="nextPage">
-                        Siguiente <i class="fas fa-chevron-right"></i>
-                    </button>
+                        <!-- Mobile Card List -->
+                        <div class="card-list mobile-view">
+                            <div v-for="contribution in paginatedContributions" :key="contribution.id" 
+                                 class="list-card">
+                                <div class="list-card-header">
+                                    <h4 class="list-card-title">{{ contribution.description || 'Aporte a meta' }}</h4>
+                                    <span class="list-card-amount positive">{{ formatCurrency(contribution.amount) }}</span>
+                                </div>
+                                <div class="list-card-details">
+                                    <div class="list-card-detail">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>{{ formatDate(contribution.date) }}</span>
+                                    </div>
+                                </div>
+                                <div class="list-card-actions">
+                                    <button @click="editContribution(contribution)" class="btn-edit" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                        <span class="mobile-only">Editar</span>
+                                    </button>
+                                    <button @click="confirmDeleteContribution(contribution)" class="btn-delete" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                        <span class="mobile-only">Eliminar</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Pagination -->
+                    <div v-if="contributions.length > itemsPerPage" class="pagination">
+                        <button class="btn-pagination" :disabled="currentPage === 1" @click="previousPage">
+                            <i class="fas fa-chevron-left"></i> 
+                            <span class="mobile-only">Anterior</span>
+                        </button>
+                        <span class="pagination-info">Página {{ currentPage }} de {{ totalPages }}</span>
+                        <button class="btn-pagination" :disabled="currentPage === totalPages" @click="nextPage">
+                            <span class="mobile-only">Siguiente</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -197,7 +234,7 @@ window.ContributionsListComponent = {
             contributionToDelete: null,
             currentPage: 1,
             itemsPerPage: 10,
-            goalId: null, // Add goalId to data
+            goalId: null,
             contributionForm: {
                 amount: null,
                 displayAmount: '',
@@ -209,7 +246,6 @@ window.ContributionsListComponent = {
         }
     },
     computed: {
-        // Remove the goalId computed property and handle it in mounted
         totalContributions() {
             return this.contributions.reduce((total, contribution) => total + contribution.amount, 0);
         },
@@ -226,6 +262,11 @@ window.ContributionsListComponent = {
                 const dateB = b.date.toDate ? b.date.toDate() : new Date(b.date);
                 return dateB - dateA; // Most recent first
             });
+        },
+        paginatedContributions() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.sortedContributions.slice(start, end);
         },
         totalPages() {
             return Math.ceil(this.contributions.length / this.itemsPerPage);

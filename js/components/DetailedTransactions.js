@@ -1,4 +1,3 @@
-
 // js/components/DetailedTransactions.js
 window.DetailedTransactionsComponent = {
     template: `
@@ -68,9 +67,9 @@ window.DetailedTransactionsComponent = {
                 </div>
             </div>
 
-            <!-- Transactions Table -->
-            <div class="transactions-card">
-                <div class="card-header">
+            <!-- Transactions List -->
+            <div class="list-container">
+                <div class="list-header">
                     <h3>Lista de Transacciones</h3>
                     <div class="table-info">
                         <span v-if="!loading">
@@ -80,7 +79,7 @@ window.DetailedTransactionsComponent = {
                     </div>
                 </div>
 
-                <div class="card-body">
+                <div class="list-body">
                     <!-- Loading State -->
                     <div v-if="loading" class="loading-state">
                         <i class="fas fa-spinner fa-spin"></i>
@@ -96,96 +95,181 @@ window.DetailedTransactionsComponent = {
                         </button>
                     </div>
 
-                    <!-- Transactions Table -->
-                    <table v-else class="transactions-table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Descripción</th>
-                                <th>Categoría</th>
-                                <th>Tipo</th>
-                                <th>Monto</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="transaction in paginatedTransactions" :key="transaction.id" 
-                                :class="{'editing': editingTransaction === transaction.id}">
+                    <template v-else>
+                        <!-- Desktop Table -->
+                        <div class="scrollable-container desktop-view">
+                            <table class="responsive-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Descripción</th>
+                                        <th>Categoría</th>
+                                        <th>Tipo</th>
+                                        <th>Monto</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="transaction in paginatedTransactions" :key="transaction.id" 
+                                        :class="{'editing': editingTransaction === transaction.id}">
+                                        
+                                        <!-- View Mode -->
+                                        <template v-if="editingTransaction !== transaction.id">
+                                            <td>{{ formatDate(transaction.date) }}</td>
+                                            <td>{{ transaction.name }}</td>
+                                            <td>
+                                                <span class="category-tag" :class="transaction.type">
+                                                    {{ getCategoryLabel(transaction.category) }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="type-badge" :class="transaction.type">
+                                                    {{ transaction.type === 'income' ? 'Ingreso' : 'Gasto' }}
+                                                </span>
+                                            </td>
+                                            <td :class="transaction.type">
+                                                {{ transaction.type === 'income' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
+                                            </td>
+                                            <td class="actions">
+                                                <button @click="startEdit(transaction)" class="btn-edit" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button @click="confirmDelete(transaction)" class="btn-delete" title="Eliminar">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </template>
+
+                                        <!-- Edit Mode -->
+                                        <template v-else>
+                                            <td>{{ formatDate(transaction.date) }}</td>
+                                            <td>
+                                                <input v-model="editForm.name" class="edit-input">
+                                            </td>
+                                            <td>
+                                                <select v-model="editForm.category" class="edit-select">
+                                                    <option v-for="category in getCategories(editForm.type)" 
+                                                            :key="category.value" 
+                                                            :value="category.value">
+                                                        {{ category.label }}
+                                                    </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select v-model="editForm.type" class="edit-select" @change="resetEditCategory">
+                                                    <option value="income">Ingreso</option>
+                                                    <option value="expense">Gasto</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number" v-model.number="editForm.amount" 
+                                                       class="edit-input" min="1" step="1000">
+                                            </td>
+                                            <td class="actions">
+                                                <button @click="saveEdit(transaction.id)" class="btn-save" title="Guardar">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button @click="cancelEdit" class="btn-cancel" title="Cancelar">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </template>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile Card List -->
+                        <div class="card-list mobile-view">
+                            <div v-for="transaction in paginatedTransactions" :key="transaction.id" 
+                                 class="list-card" :class="{'editing': editingTransaction === transaction.id}">
                                 
-                                <!-- View Mode -->
                                 <template v-if="editingTransaction !== transaction.id">
-                                    <td>{{ formatDate(transaction.date) }}</td>
-                                    <td>{{ transaction.name }}</td>
-                                    <td>
-                                        <span class="category-tag" :class="transaction.type">
-                                            {{ getCategoryLabel(transaction.category) }}
+                                    <div class="list-card-header">
+                                        <h4 class="list-card-title">{{ transaction.name }}</h4>
+                                        <span class="list-card-amount" :class="transaction.type">
+                                            {{ transaction.type === 'income' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
                                         </span>
-                                    </td>
-                                    <td>
-                                        <span class="type-badge" :class="transaction.type">
-                                            {{ transaction.type === 'income' ? 'Ingreso' : 'Gasto' }}
-                                        </span>
-                                    </td>
-                                    <td :class="transaction.type">
-                                        {{ transaction.type === 'income' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
-                                    </td>
-                                    <td class="actions">
+                                    </div>
+                                    <div class="list-card-details">
+                                        <div class="list-card-detail">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>{{ formatDateShort(transaction.date) }}</span>
+                                        </div>
+                                        <div class="list-card-detail">
+                                            <i class="fas fa-tag"></i>
+                                            <span>{{ getCategoryLabel(transaction.category) }}</span>
+                                        </div>
+                                        <div class="list-card-detail">
+                                            <i class="fas" :class="transaction.type === 'income' ? 'fa-arrow-down income' : 'fa-arrow-up expense'"></i>
+                                            <span>{{ transaction.type === 'income' ? 'Ingreso' : 'Gasto' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="list-card-actions">
                                         <button @click="startEdit(transaction)" class="btn-edit" title="Editar">
                                             <i class="fas fa-edit"></i>
+                                            <span class="mobile-only">Editar</span>
                                         </button>
                                         <button @click="confirmDelete(transaction)" class="btn-delete" title="Eliminar">
                                             <i class="fas fa-trash"></i>
+                                            <span class="mobile-only">Eliminar</span>
                                         </button>
-                                    </td>
+                                    </div>
                                 </template>
 
-                                <!-- Edit Mode -->
                                 <template v-else>
-                                    <td>{{ formatDate(transaction.date) }}</td>
-                                    <td>
-                                        <input v-model="editForm.name" class="edit-input">
-                                    </td>
-                                    <td>
-                                        <select v-model="editForm.category" class="edit-select">
-                                            <option v-for="category in getCategories(editForm.type)" 
-                                                    :key="category.value" 
-                                                    :value="category.value">
-                                                {{ category.label }}
-                                            </option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select v-model="editForm.type" class="edit-select" @change="resetEditCategory">
-                                            <option value="income">Ingreso</option>
-                                            <option value="expense">Gasto</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="number" v-model.number="editForm.amount" 
-                                               class="edit-input" min="1" step="1000">
-                                    </td>
-                                    <td class="actions">
+                                    <div class="list-card-header">
+                                        <h4 class="list-card-title">
+                                            <input v-model="editForm.name" class="edit-input full-width" placeholder="Descripción">
+                                        </h4>
+                                    </div>
+                                    <div class="list-card-details">
+                                        <div class="list-card-detail full-width">
+                                            <select v-model="editForm.type" class="edit-select full-width" @change="resetEditCategory">
+                                                <option value="income">Ingreso</option>
+                                                <option value="expense">Gasto</option>
+                                            </select>
+                                        </div>
+                                        <div class="list-card-detail full-width">
+                                            <select v-model="editForm.category" class="edit-select full-width">
+                                                <option v-for="category in getCategories(editForm.type)" 
+                                                        :key="category.value" 
+                                                        :value="category.value">
+                                                    {{ category.label }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="list-card-detail full-width">
+                                            <input type="number" v-model.number="editForm.amount" 
+                                                   class="edit-input full-width" min="1" step="1000" placeholder="Monto">
+                                        </div>
+                                    </div>
+                                    <div class="list-card-actions">
                                         <button @click="saveEdit(transaction.id)" class="btn-save" title="Guardar">
                                             <i class="fas fa-check"></i>
+                                            <span class="mobile-only">Guardar</span>
                                         </button>
                                         <button @click="cancelEdit" class="btn-cancel" title="Cancelar">
                                             <i class="fas fa-times"></i>
+                                            <span class="mobile-only">Cancelar</span>
                                         </button>
-                                    </td>
+                                    </div>
                                 </template>
-                            </tr>
-                        </tbody>
-                    </table>
+                            </div>
+                        </div>
+                    </template>
 
                     <!-- Pagination -->
                     <div v-if="filteredTransactions.length > itemsPerPage" class="pagination">
                         <button @click="prevPage" :disabled="currentPage === 1" class="pagination-btn">
                             <i class="fas fa-chevron-left"></i>
+                            <span class="mobile-only">Anterior</span>
                         </button>
                         <span class="pagination-info">
                             Página {{ currentPage }} de {{ totalPages }}
                         </span>
                         <button @click="nextPage" :disabled="currentPage === totalPages" class="pagination-btn">
+                            <span class="mobile-only">Siguiente</span>
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
@@ -228,8 +312,9 @@ window.DetailedTransactionsComponent = {
             showDeleteModal: false,
             transactionToDelete: null,
             searchTimeout: null,
-            authUnsubscribe: null, // Track auth listener
-            exportUrls: [] // Track created URLs for cleanup
+            authUnsubscribe: null,
+            exportUrls: [],
+            _isMounted: false
         }
     },
     computed: {
@@ -317,7 +402,7 @@ window.DetailedTransactionsComponent = {
 
                 const transactions = await window.getAllTransactions(user.uid);
                 this.allTransactions = transactions;
-                this.currentPage = 1; // Reset to first page when filters change
+                this.currentPage = 1;
             } catch (error) {
                 console.error('Error loading transactions:', error);
             } finally {
@@ -328,7 +413,7 @@ window.DetailedTransactionsComponent = {
         debouncedSearch() {
             clearTimeout(this.searchTimeout);
             this.searchTimeout = setTimeout(() => {
-                if (this._isMounted) { // Check if component is still mounted
+                if (this._isMounted) {
                     this.loadTransactions();
                 }
             }, 500);
@@ -379,7 +464,7 @@ window.DetailedTransactionsComponent = {
 
                 await window.updateTransaction(user.uid, transactionId, this.editForm);
                 this.editingTransaction = null;
-                await this.loadTransactions(); // Reload to get updated data
+                await this.loadTransactions();
             } catch (error) {
                 console.error('Error updating transaction:', error);
                 alert('Error al actualizar la transacción: ' + error.message);
@@ -404,7 +489,7 @@ window.DetailedTransactionsComponent = {
                 await window.deleteTransaction(user.uid, this.transactionToDelete.id);
                 this.showDeleteModal = false;
                 this.transactionToDelete = null;
-                await this.loadTransactions(); // Reload to get updated data
+                await this.loadTransactions();
             } catch (error) {
                 console.error('Error deleting transaction:', error);
                 alert('Error al eliminar la transacción: ' + error.message);
@@ -442,7 +527,6 @@ window.DetailedTransactionsComponent = {
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             
-            // Store URL for cleanup
             this.exportUrls.push(url);
             
             link.setAttribute('href', url);
@@ -452,10 +536,9 @@ window.DetailedTransactionsComponent = {
             link.click();
             document.body.removeChild(link);
             
-            // Clean up URL after a reasonable time
             setTimeout(() => {
                 this.cleanupExportUrl(url);
-            }, 60000); // Clean up after 1 minute
+            }, 60000);
         },
         
         cleanupExportUrl(url) {
@@ -464,7 +547,6 @@ window.DetailedTransactionsComponent = {
         },
 
         exportToPDF() {
-            // Simple PDF export using browser print
             const printWindow = window.open('', '_blank');
             const transactionRows = this.filteredTransactions.map(transaction => `
                 <tr>
@@ -549,37 +631,39 @@ window.DetailedTransactionsComponent = {
                    }).format(amount).replace('PYG', 'Gs.');
         },
 
-        // Make sure dates are properly converted
         formatDate(date) {
             if (!date) return 'Fecha no disponible';
             
-            // Handle both Date objects and Firestore Timestamps
             const jsDate = this.getJsDate(date);
             return window.Formatters ? window.Formatters.formatDate(jsDate) : 
                    jsDate ? new Intl.DateTimeFormat('es-ES').format(jsDate) : 'Fecha no disponible';
         },
 
-        // Helper method to convert Firestore Timestamp to JS Date
+        formatDateShort(date) {
+            if (!date) return 'N/A';
+            const dateObj = date.toDate ? date.toDate() : new Date(date);
+            return dateObj.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit'
+            });
+        },
+
         getJsDate(date) {
             if (!date) return null;
             return date.toDate ? date.toDate() : new Date(date);
         },
         
-        // Add cleanup method
         cleanup() {
-            // Clear any pending timeouts
             if (this.searchTimeout) {
                 clearTimeout(this.searchTimeout);
                 this.searchTimeout = null;
             }
             
-            // Unsubscribe from auth listener
             if (this.authUnsubscribe) {
                 this.authUnsubscribe();
                 this.authUnsubscribe = null;
             }
             
-            // Clean up export URLs
             this.exportUrls.forEach(url => {
                 URL.revokeObjectURL(url);
             });
@@ -588,7 +672,6 @@ window.DetailedTransactionsComponent = {
     },
     
     async mounted() {
-        // Add this check to all components
         if (!window.firebaseAuth) {
             console.error('Firebase not initialized - redirecting to login');
             window.location.href = "./index.html";
@@ -597,7 +680,6 @@ window.DetailedTransactionsComponent = {
         
         this._isMounted = true;
         
-        // Store the unsubscribe function
         this.authUnsubscribe = window.setupAuthListener((user) => {
             if (user && this._isMounted) {
                 this.loadTransactions();
@@ -611,19 +693,16 @@ window.DetailedTransactionsComponent = {
         }
     },
     
-    // Vue 3 lifecycle for cleanup
     unmounted() {
         this._isMounted = false;
         this.cleanup();
     },
     
-    // Vue 2 compatibility
     beforeDestroy() {
         this._isMounted = false;
         this.cleanup();
     },
 
-    // Add Vue 3 beforeUnmount for consistency
     beforeUnmount() {
         this._isMounted = false;
         this.cleanup();

@@ -112,13 +112,15 @@ window.SavingsDashboardComponent = {
                             </div>
                         </div>
 
-                        <!-- Recent Contributions -->
+                        <!-- Recent Contributions - UPDATED -->
                         <div v-if="goal.contributions && goal.contributions.length > 0" class="contributions-section">
                             <h5>Últimos aportes:</h5>
-                            <div v-for="contribution in goal.contributions.slice(0, 3)" :key="contribution.id" 
-                                 class="contribution-item">
-                                <span>{{ formatDate(contribution.date) }}</span>
-                                <span class="contribution-amount">{{ formatCurrency(contribution.amount) }}</span>
+                            <div class="contributions-list-mini">
+                                <div v-for="contribution in goal.contributions.slice(0, 3)" :key="contribution.id" 
+                                     class="contribution-item-mini">
+                                    <span class="contribution-date">{{ formatDateShort(contribution.date) }}</span>
+                                    <span class="contribution-amount">{{ formatCurrency(contribution.amount) }}</span>
+                                </div>
                             </div>
                             <button v-if="goal.contributions.length > 3" @click="viewAllContributions(goal)" 
                                     class="btn-link">
@@ -518,8 +520,8 @@ window.SavingsDashboardComponent = {
         },
 
         viewAllContributions(goal) {
-        // Use window.location.hash for navigation instead of $router.push()
-        window.location.hash = `/savings/${goal.id}/contributions`;
+            // Use window.location.hash for navigation instead of $router.push()
+            window.location.hash = `/savings/${goal.id}/contributions`;
         },
         
         formatCurrency(amount) {
@@ -536,6 +538,17 @@ window.SavingsDashboardComponent = {
             const dateObj = date.toDate ? date.toDate() : new Date(date);
             return window.Formatters ? window.Formatters.formatDate(dateObj) : 
                    new Intl.DateTimeFormat('es-ES').format(dateObj);
+        },
+
+        formatDateShort(date) {
+            if (!date) return 'Fecha no disponible';
+            const dateObj = date.toDate ? date.toDate() : new Date(date);
+            return window.Formatters ? window.Formatters.formatDateShort(dateObj) : 
+                   new Intl.DateTimeFormat('es-ES', {
+                       day: '2-digit',
+                       month: '2-digit',
+                       year: 'numeric'
+                   }).format(dateObj);
         },
 
         formatDateForInput(date) {
