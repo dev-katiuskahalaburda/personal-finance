@@ -1,4 +1,4 @@
-// utils/formatters.js
+// utils/formatters.js - UPDATED VERSION
 window.Formatters = {
     formatCurrency(amount) {
         // Handle undefined, null, or NaN values
@@ -28,6 +28,15 @@ window.Formatters = {
     },
 
     formatDate(date) {
+        if (!date) return 'Fecha no disponible';
+        return new Intl.DateTimeFormat('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        }).format(date);
+    },
+
+    formatDateShort(date) {
         if (!date) return 'Fecha no disponible';
         return new Intl.DateTimeFormat('es-ES', {
             day: '2-digit',
