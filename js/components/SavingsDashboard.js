@@ -1,3 +1,4 @@
+
 // js/components/SavingsDashboard.js
 window.SavingsDashboardComponent = {
     template: `
@@ -68,7 +69,7 @@ window.SavingsDashboardComponent = {
                 <!-- Goals Grid -->
                 <div v-else class="goals-grid">
                     <div v-for="goal in goals" :key="goal.id" 
-                         class="goal-card" :class="{ completed: goal.progress >= 100 }">
+                         class="goal-card" :class="{ completed: goal.progress >= 100, archived: goal.archived }">
                         
                         <div class="goal-header">
                             <h4>{{ goal.name }}</h4>
@@ -87,7 +88,8 @@ window.SavingsDashboardComponent = {
 
                         <div class="goal-progress">
                             <div class="progress-bar">
-                                <div class="progress-fill" :style="{ width: Math.min(goal.progress, 100) + '%' }"></div>
+                                <div class="progress-fill" :class="{ completed: goal.progress >= 100 }" 
+                                     :style="{ width: Math.min(goal.progress, 100) + '%' }"></div>
                             </div>
                             <div class="progress-text">
                                 <span>{{ formatCurrency(goal.currentAmount) }} / {{ formatCurrency(goal.targetAmount) }}</span>
@@ -110,11 +112,30 @@ window.SavingsDashboardComponent = {
                             </div>
                         </div>
 
+                        <!-- Recent Contributions -->
+                        <div v-if="goal.contributions && goal.contributions.length > 0" class="contributions-section">
+                            <h5>Últimos aportes:</h5>
+                            <div v-for="contribution in goal.contributions.slice(0, 3)" :key="contribution.id" 
+                                 class="contribution-item">
+                                <span>{{ formatDate(contribution.date) }}</span>
+                                <span class="contribution-amount">{{ formatCurrency(contribution.amount) }}</span>
+                            </div>
+                            <button v-if="goal.contributions.length > 3" @click="viewAllContributions(goal)" 
+                                    class="btn-link">
+                                Ver todos los aportes
+                            </button>
+                        </div>
+
                         <!-- Archive button for completed goals -->
-                        <div v-if="goal.progress >= 100" class="goal-footer">
+                        <div v-if="goal.progress >= 100 && !goal.archived" class="goal-footer">
                             <button @click="archiveGoal(goal.id)" class="btn-secondary">
                                 <i class="fas fa-archive"></i> Archivar
                             </button>
+                        </div>
+
+                        <!-- Archived badge -->
+                        <div v-if="goal.archived" class="goal-footer">
+                            <span class="archived-badge">Archivado</span>
                         </div>
                     </div>
                 </div>
@@ -235,10 +256,10 @@ window.SavingsDashboardComponent = {
             return this.goals.reduce((total, goal) => total + (goal.currentAmount || 0), 0);
         },
         activeGoalsCount() {
-            return this.goals.filter(goal => (goal.progress || 0) < 100).length;
+            return this.goals.filter(goal => (goal.progress || 0) < 100 && !goal.archived).length;
         },
         completedGoalsCount() {
-            return this.goals.filter(goal => (goal.progress || 0) >= 100).length;
+            return this.goals.filter(goal => (goal.progress || 0) >= 100 && !goal.archived).length;
         },
         remainingAmount() {
             if (!this.selectedGoal) return 0;
@@ -255,40 +276,15 @@ window.SavingsDashboardComponent = {
                     return;
                 }
 
-                // For now, use mock data until Firestore functions are implemented
-                this.goals = await this.getMockGoals();
+                // ✅ Use real Firestore calls instead of mock data
+                this.goals = await window.getSavingsGoals(user.uid);
                 
             } catch (error) {
                 console.error('Error loading goals:', error);
-                // Fallback to mock data
-                this.goals = await this.getMockGoals();
+                alert('Error al cargar las metas: ' + error.message);
             } finally {
                 this.loading = false;
             }
-        },
-
-        // Mock data for testing
-        async getMockGoals() {
-            return [
-                {
-                    id: '1',
-                    name: 'Vacaciones en la playa',
-                    targetAmount: 1000000,
-                    currentAmount: 350000,
-                    progress: 35,
-                    targetDate: new Date('2024-12-31'),
-                    description: 'Ahorro para viaje familiar'
-                },
-                {
-                    id: '2',
-                    name: 'Nueva laptop',
-                    targetAmount: 3000000,
-                    currentAmount: 1500000,
-                    progress: 50,
-                    targetDate: new Date('2024-10-15'),
-                    description: 'Para trabajo y estudios'
-                }
-            ];
         },
 
         showAddGoalModal() {
@@ -307,7 +303,7 @@ window.SavingsDashboardComponent = {
             this.goalForm = {
                 name: goal.name,
                 targetAmount: goal.targetAmount,
-                targetDate: goal.targetDate.toISOString().split('T')[0],
+                targetDate: this.formatDateForInput(goal.targetDate),
                 description: goal.description || ''
             };
             this.showGoalModal = true;
@@ -323,32 +319,16 @@ window.SavingsDashboardComponent = {
 
             this.saving = true;
             try {
-                // For now, just update local state
-                if (this.editingGoal) {
-                    const index = this.goals.findIndex(g => g.id === this.editingGoal.id);
-                    if (index !== -1) {
-                        this.goals[index] = {
-                            ...this.goals[index],
-                            name: this.goalForm.name,
-                            targetAmount: this.goalForm.targetAmount,
-                            targetDate: new Date(this.goalForm.targetDate),
-                            description: this.goalForm.description,
-                            progress: (this.goals[index].currentAmount / this.goalForm.targetAmount) * 100
-                        };
-                    }
-                } else {
-                    const newGoal = {
-                        id: Date.now().toString(),
-                        name: this.goalForm.name,
-                        targetAmount: this.goalForm.targetAmount,
-                        currentAmount: 0,
-                        progress: 0,
-                        targetDate: new Date(this.goalForm.targetDate),
-                        description: this.goalForm.description
-                    };
-                    this.goals.push(newGoal);
-                }
+                const user = window.firebaseAuth.currentUser;
+                if (!user) throw new Error('Usuario no autenticado');
 
+                if (this.editingGoal) {
+                    await window.updateSavingsGoal(user.uid, this.editingGoal.id, this.goalForm);
+                } else {
+                    await window.addSavingsGoal(user.uid, this.goalForm);
+                }
+                
+                await this.loadGoals(); // Reload to get updated data
                 this.closeGoalModal();
                 
             } catch (error) {
@@ -394,14 +374,20 @@ window.SavingsDashboardComponent = {
 
             this.savingContribution = true;
             try {
-                // Update local state
-                const index = this.goals.findIndex(g => g.id === this.selectedGoal.id);
-                if (index !== -1) {
-                    const newAmount = this.goals[index].currentAmount + this.contributionForm.amount;
-                    this.goals[index].currentAmount = newAmount;
-                    this.goals[index].progress = (newAmount / this.goals[index].targetAmount) * 100;
-                }
+                const user = window.firebaseAuth.currentUser;
+                if (!user) throw new Error('Usuario no autenticado');
 
+                const contributionData = {
+                    amount: Number(this.contributionForm.amount),
+                    date: new Date(this.contributionForm.date),
+                    description: `Aporte a meta: ${this.selectedGoal.name}`
+                };
+
+                // Add contribution to Firestore
+                await window.addSavingsContribution(user.uid, this.selectedGoal.id, contributionData);
+
+                // Reload goals to get updated progress
+                await this.loadGoals();
                 this.closeContributionModal();
                 
             } catch (error) {
@@ -430,8 +416,13 @@ window.SavingsDashboardComponent = {
 
         async archiveGoal(goalId) {
             try {
-                // Remove from local state
-                this.goals = this.goals.filter(goal => goal.id !== goalId);
+                const user = window.firebaseAuth.currentUser;
+                if (!user) throw new Error('Usuario no autenticado');
+
+                await window.archiveSavingsGoal(user.uid, goalId);
+                
+                // Reload goals to reflect the archive status
+                await this.loadGoals();
             } catch (error) {
                 console.error('Error archiving goal:', error);
                 alert('Error al archivar la meta: ' + error.message);
@@ -450,14 +441,24 @@ window.SavingsDashboardComponent = {
 
         async confirmDeleteFinal() {
             try {
-                // Remove from local state
-                this.goals = this.goals.filter(goal => goal.id !== this.goalToDelete.id);
+                const user = window.firebaseAuth.currentUser;
+                if (!user) throw new Error('Usuario no autenticado');
+
+                await window.deleteSavingsGoal(user.uid, this.goalToDelete.id);
+                
+                // Reload goals to reflect the deletion
+                await this.loadGoals();
                 this.showDeleteModal = false;
                 this.goalToDelete = null;
             } catch (error) {
                 console.error('Error deleting goal:', error);
                 alert('Error al eliminar la meta: ' + error.message);
             }
+        },
+
+        viewAllContributions(goal) {
+            // For now, just show an alert. Could be expanded to show a detailed modal
+            alert(`Mostrando todos los aportes para: ${goal.name}`);
         },
 
         formatCurrency(amount) {
@@ -471,11 +472,26 @@ window.SavingsDashboardComponent = {
 
         formatDate(date) {
             if (!date) return 'Fecha no disponible';
-            return new Intl.DateTimeFormat('es-ES').format(new Date(date));
+            const dateObj = date.toDate ? date.toDate() : new Date(date);
+            return window.Formatters ? window.Formatters.formatDate(dateObj) : 
+                   new Intl.DateTimeFormat('es-ES').format(dateObj);
+        },
+
+        formatDateForInput(date) {
+            if (!date) return '';
+            const dateObj = date.toDate ? date.toDate() : new Date(date);
+            return dateObj.toISOString().split('T')[0];
         }
     },
 
     async mounted() {
+        // Add this check to all components
+        if (!window.firebaseAuth) {
+            console.error('Firebase not initialized - redirecting to login');
+            window.location.href = "./index.html";
+            return;
+        }
+        
         // Setup auth listener
         window.setupAuthListener((user) => {
             if (user) {

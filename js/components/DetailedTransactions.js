@@ -109,12 +109,12 @@ window.DetailedTransactionsComponent = {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="transaction in filteredTransactions" :key="transaction.id" 
+                            <tr v-for="transaction in paginatedTransactions" :key="transaction.id" 
                                 :class="{'editing': editingTransaction === transaction.id}">
                                 
                                 <!-- View Mode -->
                                 <template v-if="editingTransaction !== transaction.id">
-                                    <td>{{ formatDate(transaction.date?.toDate()) }}</td>
+                                    <td>{{ formatDate(transaction.date) }}</td>
                                     <td>{{ transaction.name }}</td>
                                     <td>
                                         <span class="category-tag" :class="transaction.type">
@@ -141,7 +141,7 @@ window.DetailedTransactionsComponent = {
 
                                 <!-- Edit Mode -->
                                 <template v-else>
-                                    <td>{{ formatDate(transaction.date?.toDate()) }}</td>
+                                    <td>{{ formatDate(transaction.date) }}</td>
                                     <td>
                                         <input v-model="editForm.name" class="edit-input">
                                     </td>
@@ -259,7 +259,7 @@ window.DetailedTransactionsComponent = {
             // Filter by month and year
             if (this.filters.month !== 'all' || this.filters.year !== 'all') {
                 filtered = filtered.filter(transaction => {
-                    const date = transaction.date?.toDate();
+                    const date = this.getJsDate(transaction.date);
                     if (!date) return false;
 
                     const transactionYear = date.getFullYear();
@@ -426,7 +426,7 @@ window.DetailedTransactionsComponent = {
         exportToCSV() {
             const headers = ['Fecha', 'Descripción', 'Categoría', 'Tipo', 'Monto', 'Notas'];
             const csvData = this.filteredTransactions.map(transaction => [
-                this.formatDate(transaction.date?.toDate()),
+                this.formatDate(transaction.date),
                 `"${transaction.name}"`,
                 transaction.category,
                 transaction.type === 'income' ? 'Ingreso' : 'Gasto',
@@ -468,7 +468,7 @@ window.DetailedTransactionsComponent = {
             const printWindow = window.open('', '_blank');
             const transactionRows = this.filteredTransactions.map(transaction => `
                 <tr>
-                    <td>${this.formatDate(transaction.date?.toDate())}</td>
+                    <td>${this.formatDate(transaction.date)}</td>
                     <td>${transaction.name}</td>
                     <td>${this.getCategoryLabel(transaction.category)}</td>
                     <td>${transaction.type === 'income' ? 'Ingreso' : 'Gasto'}</td>
@@ -549,9 +549,20 @@ window.DetailedTransactionsComponent = {
                    }).format(amount).replace('PYG', 'Gs.');
         },
 
+        // Make sure dates are properly converted
         formatDate(date) {
-            return window.Formatters ? window.Formatters.formatDate(date) : 
-                   date ? new Intl.DateTimeFormat('es-ES').format(date) : 'Fecha no disponible';
+            if (!date) return 'Fecha no disponible';
+            
+            // Handle both Date objects and Firestore Timestamps
+            const jsDate = this.getJsDate(date);
+            return window.Formatters ? window.Formatters.formatDate(jsDate) : 
+                   jsDate ? new Intl.DateTimeFormat('es-ES').format(jsDate) : 'Fecha no disponible';
+        },
+
+        // Helper method to convert Firestore Timestamp to JS Date
+        getJsDate(date) {
+            if (!date) return null;
+            return date.toDate ? date.toDate() : new Date(date);
         },
         
         // Add cleanup method
@@ -577,6 +588,13 @@ window.DetailedTransactionsComponent = {
     },
     
     async mounted() {
+        // Add this check to all components
+        if (!window.firebaseAuth) {
+            console.error('Firebase not initialized - redirecting to login');
+            window.location.href = "./index.html";
+            return;
+        }
+        
         this._isMounted = true;
         
         // Store the unsubscribe function
@@ -601,6 +619,12 @@ window.DetailedTransactionsComponent = {
     
     // Vue 2 compatibility
     beforeDestroy() {
+        this._isMounted = false;
+        this.cleanup();
+    },
+
+    // Add Vue 3 beforeUnmount for consistency
+    beforeUnmount() {
         this._isMounted = false;
         this.cleanup();
     }

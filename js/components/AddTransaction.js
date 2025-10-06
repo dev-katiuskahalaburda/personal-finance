@@ -189,11 +189,19 @@ window.AddTransactionComponent = {
         },
         
         validateAmount() {
+            // Check if amount exists and is greater than 0
             if (!this.transaction.amount || this.transaction.amount <= 0) {
                 this.amountError = 'El monto debe ser mayor a 0';
                 return false;
             }
             
+            // Add check for valid number
+            if (typeof this.transaction.amount !== 'number' || isNaN(this.transaction.amount)) {
+                this.amountError = 'El monto debe ser un número válido';
+                return false;
+            }
+            
+            // Check for maximum reasonable amount
             if (this.transaction.amount > 1000000000000) { // 1 trillion
                 this.amountError = 'El monto es demasiado grande';
                 return false;
@@ -202,6 +210,12 @@ window.AddTransactionComponent = {
             // Ensure it's a whole number (no decimals)
             if (!Number.isInteger(this.transaction.amount)) {
                 this.amountError = 'El monto debe ser un número entero';
+                return false;
+            }
+            
+            // Additional safety check for finite number
+            if (!Number.isFinite(this.transaction.amount)) {
+                this.amountError = 'El monto debe ser un número finito';
                 return false;
             }
             
@@ -281,6 +295,11 @@ window.AddTransactionComponent = {
         }
     },
     mounted() {
+            if (!window.firebaseAuth) {
+        console.error('Firebase not initialized - redirecting to login');
+        window.location.href = "./index.html";
+        return;
+    }
         window.setupAuthListener((user) => {
             if (!user) window.location.href = "./index.html";
         });

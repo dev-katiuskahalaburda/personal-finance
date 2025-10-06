@@ -14,7 +14,23 @@ const app = firebase.initializeApp(firebaseConfig);
 // Exportación mediante window
 window.firebaseApp = app;
 window.firebaseAuth = firebase.auth();
-window.firebaseDb = firebase.firestore();
+window.firestore = firebase.firestore();
 
-// Verificación
+// CRITICAL FIX: Set auth persistence to LOCAL
+window.firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(() => {
+    console.log('[Config] Auth persistence set to LOCAL');
+    
+    // Check if user is already logged in
+    const currentUser = window.firebaseAuth.currentUser;
+    if (currentUser) {
+      console.log('[Config] User already authenticated:', currentUser.email);
+    } else {
+      console.log('[Config] No user currently authenticated');
+    }
+  })
+  .catch((error) => {
+    console.error('[Config] Error setting auth persistence:', error);
+  });
+
 console.log('[Config] Firebase inicializado correctamente');

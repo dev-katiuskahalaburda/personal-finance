@@ -57,7 +57,7 @@ window.DashboardComponent = {
                                     <td :class="transaction.type">
                                         {{ transaction.type === 'income' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
                                     </td>
-                                    <td>{{ formatDate(transaction.date?.toDate()) }}</td>
+                                    <td>{{ formatDate(transaction.date) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -79,6 +79,13 @@ window.DashboardComponent = {
         }
     },
     async mounted() {
+        // Add this check to all components
+        if (!window.firebaseAuth) {
+            console.error('Firebase not initialized - redirecting to login');
+            window.location.href = "./index.html";
+            return;
+        }
+        
         // Wait for auth to be ready
         await new Promise((resolve) => {
             window.setupAuthListener((user) => {
@@ -118,10 +125,20 @@ window.DashboardComponent = {
             }
         },
         formatCurrency(amount) {
-            return window.Formatters.formatCurrency(amount);
+            return window.Formatters ? window.Formatters.formatCurrency(amount) : 
+                   new Intl.NumberFormat('es-PY', {
+                       style: 'currency',
+                       currency: 'PYG',
+                       minimumFractionDigits: 0
+                   }).format(amount || 0).replace('PYG', 'Gs.');
         },
         formatDate(date) {
-            return window.Formatters.formatDate(date);
+            if (!date) return 'Fecha no disponible';
+            
+            // Handle both Date objects and Firestore Timestamps
+            const jsDate = date.toDate ? date.toDate() : new Date(date);
+            return window.Formatters ? window.Formatters.formatDate(jsDate) : 
+                   new Intl.DateTimeFormat('es-ES').format(jsDate);
         }
     }
 };
