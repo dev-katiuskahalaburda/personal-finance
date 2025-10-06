@@ -144,10 +144,23 @@ window.SavingsDashboardComponent = {
                             <input type="text" id="goalName" v-model="goalForm.name" required maxlength="100">
                         </div>
 
+                        <!-- Amount - Changed to text input for consistency -->
                         <div class="form-group">
                             <label for="targetAmount">Monto objetivo (Gs.) *</label>
-                            <input type="number" id="targetAmount" v-model.number="goalForm.targetAmount" 
-                                   required min="1" step="1000">
+                            <input 
+                                type="text" 
+                                id="targetAmount" 
+                                v-model="goalForm.displayTargetAmount"
+                                required 
+                                placeholder="500000"
+                                @input="formatAmountInput($event, 'targetAmount')"
+                                @blur="validateAmount('targetAmount')"
+                                :class="{ 'input-error': goalForm.amountError }"
+                            >
+                            <div v-if="goalForm.amountError" class="error-message">
+                                {{ goalForm.amountError }}
+                            </div>
+                            <small class="input-hint">Ingresa solo números sin puntos ni comas</small>
                         </div>
 
                         <div class="form-group">
@@ -164,7 +177,7 @@ window.SavingsDashboardComponent = {
 
                         <div class="modal-actions">
                             <button type="button" @click="closeGoalModal" class="btn-secondary">Cancelar</button>
-                            <button type="submit" :disabled="saving" class="btn-primary">
+                            <button type="submit" :disabled="saving || !isGoalFormValid" class="btn-primary">
                                 {{ saving ? 'Guardando...' : (editingGoal ? 'Actualizar' : 'Crear Meta') }}
                             </button>
                         </div>
@@ -178,10 +191,22 @@ window.SavingsDashboardComponent = {
                     <h3>Añadir Aporte a: {{ selectedGoal?.name }}</h3>
                     
                     <form @submit.prevent="saveContribution" class="contribution-form">
+                        <!-- Amount - Changed to text input for consistency -->
                         <div class="form-group">
                             <label for="contributionAmount">Monto (Gs.) *</label>
-                            <input type="number" id="contributionAmount" v-model.number="contributionForm.amount" 
-                                   required min="1" step="1000" :max="remainingAmount">
+                            <input 
+                                type="text" 
+                                id="contributionAmount" 
+                                v-model="contributionForm.displayAmount"
+                                required 
+                                placeholder="50000"
+                                @input="formatAmountInput($event, 'contributionAmount')"
+                                @blur="validateAmount('contributionAmount')"
+                                :class="{ 'input-error': contributionForm.amountError }"
+                            >
+                            <div v-if="contributionForm.amountError" class="error-message">
+                                {{ contributionForm.amountError }}
+                            </div>
                             <small v-if="selectedGoal" class="input-hint">
                                 Restante: {{ formatCurrency(remainingAmount) }}
                             </small>
@@ -195,7 +220,7 @@ window.SavingsDashboardComponent = {
 
                         <div class="modal-actions">
                             <button type="button" @click="closeContributionModal" class="btn-secondary">Cancelar</button>
-                            <button type="submit" :disabled="savingContribution" class="btn-primary">
+                            <button type="submit" :disabled="savingContribution || !isContributionFormValid" class="btn-primary">
                                 {{ savingContribution ? 'Guardando...' : 'Añadir Aporte' }}
                             </button>
                         </div>
@@ -231,13 +256,17 @@ window.SavingsDashboardComponent = {
             goalToDelete: null,
             goalForm: {
                 name: '',
-                targetAmount: null,
+                targetAmount: null, // Stores actual number
+                displayTargetAmount: '', // Stores displayed string
                 targetDate: '',
-                description: ''
+                description: '',
+                amountError: ''
             },
             contributionForm: {
-                amount: null,
-                date: new Date().toISOString().split('T')[0]
+                amount: null, // Stores actual number
+                displayAmount: '', // Stores displayed string
+                date: new Date().toISOString().split('T')[0],
+                amountError: ''
             },
             minDate: new Date().toISOString().split('T')[0],
             maxDate: new Date().toISOString().split('T')[0]
@@ -256,6 +285,18 @@ window.SavingsDashboardComponent = {
         remainingAmount() {
             if (!this.selectedGoal) return 0;
             return Math.max(0, this.selectedGoal.targetAmount - (this.selectedGoal.currentAmount || 0));
+        },
+        isGoalFormValid() {
+            return this.goalForm.targetAmount > 0 && 
+                   this.goalForm.name.trim() && 
+                   this.goalForm.targetDate &&
+                   !this.goalForm.amountError;
+        },
+        isContributionFormValid() {
+            return this.contributionForm.amount > 0 && 
+                   this.contributionForm.date &&
+                   !this.contributionForm.amountError &&
+                   this.contributionForm.amount <= this.remainingAmount;
         }
     },
     methods: {
@@ -282,13 +323,74 @@ window.SavingsDashboardComponent = {
             }
         },
 
+        // Consistent amount formatting with AddTransaction.js
+        formatAmountInput(event, fieldType) {
+            let value = event.target.value.replace(/[^\d]/g, '');
+            
+            // Remove leading zeros
+            if (value.length > 1) {
+                value = value.replace(/^0+/, '');
+            }
+            
+            if (fieldType === 'targetAmount') {
+                this.goalForm.displayTargetAmount = value;
+                if (value) {
+                    this.goalForm.targetAmount = parseInt(value, 10);
+                } else {
+                    this.goalForm.targetAmount = null;
+                }
+                this.goalForm.amountError = '';
+            } else if (fieldType === 'contributionAmount') {
+                this.contributionForm.displayAmount = value;
+                if (value) {
+                    this.contributionForm.amount = parseInt(value, 10);
+                } else {
+                    this.contributionForm.amount = null;
+                }
+                this.contributionForm.amountError = '';
+            }
+        },
+
+        validateAmount(fieldType) {
+            let amount, errorField;
+            
+            if (fieldType === 'targetAmount') {
+                amount = this.goalForm.targetAmount;
+                errorField = 'goalForm.amountError';
+            } else {
+                amount = this.contributionForm.amount;
+                errorField = 'contributionForm.amountError';
+            }
+            
+            if (!amount || amount <= 0) {
+                this[errorField === 'goalForm.amountError' ? 'goalForm' : 'contributionForm'].amountError = 'El monto debe ser mayor a 0';
+                return false;
+            }
+            
+            if (amount > 1000000000000) {
+                this[errorField === 'goalForm.amountError' ? 'goalForm' : 'contributionForm'].amountError = 'El monto es demasiado grande';
+                return false;
+            }
+            
+            // Additional validation for contributions
+            if (fieldType === 'contributionAmount' && amount > this.remainingAmount) {
+                this.contributionForm.amountError = 'El aporte no puede exceder el monto restante de la meta';
+                return false;
+            }
+            
+            this[errorField === 'goalForm.amountError' ? 'goalForm' : 'contributionForm'].amountError = '';
+            return true;
+        },
+
         showAddGoalModal() {
             this.editingGoal = null;
             this.goalForm = {
                 name: '',
                 targetAmount: null,
+                displayTargetAmount: '',
                 targetDate: '',
-                description: ''
+                description: '',
+                amountError: ''
             };
             this.showGoalModal = true;
         },
@@ -298,8 +400,10 @@ window.SavingsDashboardComponent = {
             this.goalForm = {
                 name: goal.name,
                 targetAmount: goal.targetAmount,
+                displayTargetAmount: goal.targetAmount.toString(),
                 targetDate: this.formatDateForInput(goal.targetDate),
-                description: goal.description || ''
+                description: goal.description || '',
+                amountError: ''
             };
             this.showGoalModal = true;
         },
@@ -307,20 +411,29 @@ window.SavingsDashboardComponent = {
         closeGoalModal() {
             this.showGoalModal = false;
             this.editingGoal = null;
+            this.goalForm.amountError = '';
         },
 
         async saveGoal() {
-            if (!this.validateGoalForm()) return;
+            if (!this.validateAmount('targetAmount') || !this.isGoalFormValid) return;
 
             this.saving = true;
             try {
                 const user = window.firebaseAuth.currentUser;
                 if (!user) throw new Error('Usuario no autenticado');
 
+                // Ensure we're saving a proper integer
+                const goalData = {
+                    name: this.goalForm.name.trim(),
+                    targetAmount: Math.round(Number(this.goalForm.targetAmount)),
+                    targetDate: new Date(this.goalForm.targetDate),
+                    description: this.goalForm.description.trim()
+                };
+
                 if (this.editingGoal) {
-                    await window.updateSavingsGoal(user.uid, this.editingGoal.id, this.goalForm);
+                    await window.updateSavingsGoal(user.uid, this.editingGoal.id, goalData);
                 } else {
-                    await window.addSavingsGoal(user.uid, this.goalForm);
+                    await window.addSavingsGoal(user.uid, goalData);
                 }
                 
                 await this.loadGoals();
@@ -334,27 +447,13 @@ window.SavingsDashboardComponent = {
             }
         },
 
-        validateGoalForm() {
-            if (!this.goalForm.name.trim()) {
-                alert('El nombre de la meta es requerido');
-                return false;
-            }
-            if (!this.goalForm.targetAmount || this.goalForm.targetAmount <= 0) {
-                alert('El monto objetivo debe ser mayor a 0');
-                return false;
-            }
-            if (!this.goalForm.targetDate) {
-                alert('La fecha objetivo es requerida');
-                return false;
-            }
-            return true;
-        },
-
         addContribution(goal) {
             this.selectedGoal = goal;
             this.contributionForm = {
                 amount: null,
-                date: new Date().toISOString().split('T')[0]
+                displayAmount: '',
+                date: new Date().toISOString().split('T')[0],
+                amountError: ''
             };
             this.showContributionModal = true;
         },
@@ -362,10 +461,11 @@ window.SavingsDashboardComponent = {
         closeContributionModal() {
             this.showContributionModal = false;
             this.selectedGoal = null;
+            this.contributionForm.amountError = '';
         },
 
         async saveContribution() {
-            if (!this.validateContributionForm()) return;
+            if (!this.validateAmount('contributionAmount') || !this.isContributionFormValid) return;
 
             this.savingContribution = true;
             try {
@@ -373,13 +473,12 @@ window.SavingsDashboardComponent = {
                 if (!user) throw new Error('Usuario no autenticado');
 
                 const contributionData = {
-                    amount: Number(this.contributionForm.amount),
+                    amount: Math.round(Number(this.contributionForm.amount)),
                     date: new Date(this.contributionForm.date),
                     description: `Aporte a meta: ${this.selectedGoal.name}`
                 };
 
                 await window.addSavingsContribution(user.uid, this.selectedGoal.id, contributionData);
-
                 await this.loadGoals();
                 this.closeContributionModal();
                 
@@ -389,22 +488,6 @@ window.SavingsDashboardComponent = {
             } finally {
                 this.savingContribution = false;
             }
-        },
-
-        validateContributionForm() {
-            if (!this.contributionForm.amount || this.contributionForm.amount <= 0) {
-                alert('El monto del aporte debe ser mayor a 0');
-                return false;
-            }
-            if (this.contributionForm.amount > this.remainingAmount) {
-                alert('El aporte no puede exceder el monto restante de la meta');
-                return false;
-            }
-            if (!this.contributionForm.date) {
-                alert('La fecha del aporte es requerida');
-                return false;
-            }
-            return true;
         },
 
         confirmDeleteGoal(goal) {
