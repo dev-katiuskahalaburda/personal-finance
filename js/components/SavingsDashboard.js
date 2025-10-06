@@ -1,4 +1,3 @@
-
 // js/components/SavingsDashboard.js
 window.SavingsDashboardComponent = {
     template: `
@@ -276,12 +275,28 @@ window.SavingsDashboardComponent = {
                     return;
                 }
 
-                // ✅ Use real Firestore calls instead of mock data
+                console.log('[SavingsDashboard] Loading goals for user:', user.uid);
+                
+                // Wait a bit for Firebase to be ready if needed
+                if (!window.firebaseDb) {
+                    console.log('[SavingsDashboard] Firebase not ready, waiting...');
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+
                 this.goals = await window.getSavingsGoals(user.uid);
+                console.log('[SavingsDashboard] Goals loaded:', this.goals);
                 
             } catch (error) {
                 console.error('Error loading goals:', error);
-                alert('Error al cargar las metas: ' + error.message);
+                
+                // More specific error messages
+                if (error.code === 'failed-precondition') {
+                    alert('Error: Se necesita un índice de Firestore. Esto puede tomar unos minutos en configurarse automáticamente.');
+                } else {
+                    alert('Error al cargar las metas: ' + (error.message || 'Error desconocido'));
+                }
+                
+                this.goals = [];
             } finally {
                 this.loading = false;
             }
