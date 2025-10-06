@@ -18,10 +18,23 @@ window.SavingsDashboardComponent = {
             <div v-if="loading" class="loading-state">
                 <i class="fas fa-spinner fa-spin"></i>
                 <p>Cargando metas...</p>
+                <small>Si tarda mucho, verifica tu conexión</small>
+                <button @click="loadGoals" class="btn-secondary" style="margin-top: 1rem;">
+                    <i class="fas fa-redo"></i> Reintentar
+                </button>
+            </div>
+
+            <!-- Error State -->
+            <div v-else-if="loadError" class="empty-state error-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Error al cargar las metas</p>
+                <button @click="loadGoals" class="btn-primary">
+                    <i class="fas fa-redo"></i> Reintentar
+                </button>
             </div>
 
             <!-- Savings Summary Cards -->
-            <div v-else class="savings-summary-grid">
+            <div v-else-if="!loading && !loadError" class="savings-summary-grid">
                 <div class="card">
                     <div class="card-header">
                         <h3>Total Ahorrado</h3>
@@ -51,7 +64,7 @@ window.SavingsDashboardComponent = {
             </div>
 
             <!-- Goals List -->
-            <div v-if="!loading" class="goals-section">
+            <div v-if="!loading && !loadError" class="goals-section">
                 <div class="section-header">
                     <h3>Tus Metas de Ahorro</h3>
                 </div>
@@ -249,6 +262,7 @@ window.SavingsDashboardComponent = {
         return {
             goals: [],
             loading: false,
+            loadError: false,
             showGoalModal: false,
             showContributionModal: false,
             showDeleteModal: false,
@@ -272,7 +286,8 @@ window.SavingsDashboardComponent = {
                 amountError: ''
             },
             minDate: new Date().toISOString().split('T')[0],
-            maxDate: new Date().toISOString().split('T')[0]
+            maxDate: new Date().toISOString().split('T')[0],
+            loadTimeout: null // Add timeout reference
         }
     },
     computed: {
@@ -304,25 +319,51 @@ window.SavingsDashboardComponent = {
     },
     methods: {
         async loadGoals() {
+            // Clear any existing timeout
+            if (this.loadTimeout) {
+                clearTimeout(this.loadTimeout);
+            }
+            
             this.loading = true;
+            this.loadError = false;
+            console.log('[SavingsDashboard] Starting to load goals...');
+            
+            // Set a timeout to prevent infinite loading
+            this.loadTimeout = setTimeout(() => {
+                if (this.loading) {
+                    console.warn('[SavingsDashboard] Load timeout reached, forcing stop');
+                    this.loading = false;
+                    this.loadError = true;
+                    alert('Tiempo de carga excedido. Por favor, recarga la página.');
+                }
+            }, 10000); // 10 second timeout
+            
             try {
                 const user = window.firebaseAuth.currentUser;
                 if (!user) {
+                    console.error('[SavingsDashboard] No authenticated user');
                     window.location.href = "./index.html";
                     return;
                 }
 
-                console.log('[SavingsDashboard] Loading goals for user:', user.uid);
+                console.log('[SavingsDashboard] User authenticated:', user.uid);
                 
+                if (typeof window.getSavingsGoals !== 'function') {
+                    throw new Error('getSavingsGoals function not available');
+                }
+
                 this.goals = await window.getSavingsGoals(user.uid);
-                console.log('[SavingsDashboard] Goals loaded:', this.goals);
+                console.log('[SavingsDashboard] Goals loaded successfully:', this.goals);
                 
             } catch (error) {
-                console.error('Error loading goals:', error);
+                console.error('[SavingsDashboard] Error loading goals:', error);
+                this.loadError = true;
                 alert('Error al cargar las metas: ' + (error.message || 'Error desconocido'));
                 this.goals = [];
             } finally {
                 this.loading = false;
+                clearTimeout(this.loadTimeout); // Clear the timeout
+                console.log('[SavingsDashboard] Loading completed');
             }
         },
 
@@ -559,20 +600,40 @@ window.SavingsDashboardComponent = {
     },
 
     async mounted() {
+        console.log('[SavingsDashboard] Component mounted');
+        
         if (!window.firebaseAuth) {
-            console.error('Firebase not initialized - redirecting to login');
+            console.error('[SavingsDashboard] Firebase not initialized - redirecting to login');
             window.location.href = "./index.html";
             return;
         }
         
+        // Check if required functions exist
+        if (typeof window.getSavingsGoals !== 'function') {
+            console.error('[SavingsDashboard] Required function getSavingsGoals not found');
+            alert('Error: Funciones de ahorro no disponibles. Recarga la página.');
+            this.loading = false;
+            return;
+        }
+        
+        // Set up auth listener
         window.setupAuthListener((user) => {
             if (user) {
+                console.log('[SavingsDashboard] Auth state changed - user authenticated');
                 this.loadGoals();
             } else {
+                console.log('[SavingsDashboard] Auth state changed - no user, redirecting');
                 window.location.href = "./index.html";
             }
         });
         
-        await this.loadGoals();
+        // Load goals immediately if user is already authenticated
+        const user = window.firebaseAuth.currentUser;
+        if (user) {
+            console.log('[SavingsDashboard] User already authenticated, loading goals...');
+            await this.loadGoals();
+        } else {
+            console.log('[SavingsDashboard] No user yet, waiting for auth...');
+        }
     }
 };
