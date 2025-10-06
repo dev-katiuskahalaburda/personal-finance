@@ -789,7 +789,7 @@
 .goal-card.archived {
     border-left-color: #6c757d;
     opacity: 0.7;
-    background: linear-gradient(135deg, #f8f9fa 0%, var(--card-bg) 100%);
+    background: linear-gradient(135deg, #f8f9fa 0%, var(--card-bg) 100%;
 }
 
 .goal-header {
@@ -978,4 +978,110 @@
     border-radius: 12px;
     font-size: 0.8rem;
     font-weight: 500;
+}
+
+/* Contributions List Styles */
+.contributions-list {
+    padding: 20px;
+}
+
+.contributions-list .header-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.contributions-list .btn-back {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s ease;
+}
+
+.contributions-list .btn-back:hover {
+    background: #4b5563;
+}
+
+.contributions-list .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.contributions-table-container {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.contributions-list .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.contributions-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.contributions-table th,
+.contributions-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.contributions-table th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #374151;
+}
+
+.contributions-table .amount {
+    font-weight: 600;
+    color: #059669;
+}
+
+.contributions-table .actions {
+    display: flex;
+    gap: 8px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.btn-pagination {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-pagination:hover:not(:disabled) {
+    background: #2563eb;
+}
+
+.btn-pagination:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
 }

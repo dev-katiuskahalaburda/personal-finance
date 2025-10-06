@@ -455,4 +455,73 @@ window.getGoalContributions = async (userId, goalId, limit = 10) => {
     }
 };
 
+// Add to firestore.js - New functions for contributions management
+window.getSavingsGoal = async (userId, goalId) => {
+    try {
+        console.log('[Firestore] Getting savings goal:', { userId, goalId });
+        
+        const doc = await window.firebaseDb.collection('users').doc(userId)
+            .collection('savingsGoals').doc(goalId).get();
+        
+        if (!doc.exists) {
+            throw new Error('Meta no encontrada');
+        }
+        
+        const data = doc.data();
+        
+        // Get contributions to calculate current amount and progress
+        const contributions = await window.getGoalContributions(userId, goalId);
+        const currentAmount = contributions.reduce((sum, contrib) => sum + contrib.amount, 0);
+        const progress = data.targetAmount > 0 ? (currentAmount / data.targetAmount) * 100 : 0;
+        
+        const goal = {
+            ...data,
+            contributions: contributions,
+            currentAmount: currentAmount,
+            progress: progress
+        };
+        
+        console.log('[Firestore] Savings goal retrieved:', goal);
+        return goal;
+    } catch (error) {
+        console.error('Error getting savings goal:', error);
+        throw error;
+    }
+};
+
+window.updateSavingsContribution = async (userId, goalId, contributionId, contributionData) => {
+    try {
+        console.log('[Firestore] Updating savings contribution:', { userId, goalId, contributionId, contributionData });
+        
+        await window.firebaseDb.collection('users').doc(userId)
+            .collection('savingsGoals').doc(goalId)
+            .collection('contributions').doc(contributionId)
+            .update({
+                ...contributionData,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        
+        console.log('[Firestore] Savings contribution updated successfully');
+    } catch (error) {
+        console.error('Error updating savings contribution:', error);
+        throw error;
+    }
+};
+
+window.deleteSavingsContribution = async (userId, goalId, contributionId) => {
+    try {
+        console.log('[Firestore] Deleting savings contribution:', { userId, goalId, contributionId });
+        
+        await window.firebaseDb.collection('users').doc(userId)
+            .collection('savingsGoals').doc(goalId)
+            .collection('contributions').doc(contributionId)
+            .delete();
+        
+        console.log('[Firestore] Savings contribution deleted successfully');
+    } catch (error) {
+        console.error('Error deleting savings contribution:', error);
+        throw error;
+    }
+};
+
 console.log('[Firestore] Módulo de base de datos cargado');

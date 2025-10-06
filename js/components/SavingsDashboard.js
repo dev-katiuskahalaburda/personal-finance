@@ -517,7 +517,7 @@ window.SavingsDashboardComponent = {
         },
 
         viewAllContributions(goal) {
-            alert(`Mostrando todos los aportes para: ${goal.name}`);
+        this.$router.push(`/savings/${goal.id}/contributions`);
         },
 
         formatCurrency(amount) {
