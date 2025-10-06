@@ -158,64 +158,32 @@ window.AddTransactionComponent = {
     },
     methods: {
         formatAmountInput(event) {
-            // Remove any non-digit characters
-            let rawValue = event.target.value.replace(/[^\d]/g, '');
+            let value = event.target.value.replace(/[^\d]/g, '');
             
             // Remove leading zeros
-            if (rawValue.length > 1) {
-                rawValue = rawValue.replace(/^0+/, '');
+            if (value.length > 1) {
+                value = value.replace(/^0+/, '');
             }
             
-            // Update display (show raw numbers)
-            this.displayAmount = rawValue;
+            this.displayAmount = value;
             
-            // Convert to number and store
-            if (rawValue) {
-                const numericValue = parseInt(rawValue, 10);
-                if (!isNaN(numericValue)) {
-                    this.transaction.amount = numericValue;
-                    this.debugInfo = {
-                        raw: rawValue,
-                        number: numericValue,
-                        storing: this.transaction.amount
-                    };
-                }
+            if (value) {
+                this.transaction.amount = parseInt(value, 10);
             } else {
                 this.transaction.amount = null;
-                this.debugInfo = null;
             }
             
             this.amountError = '';
         },
-        
+
         validateAmount() {
-            // Check if amount exists and is greater than 0
             if (!this.transaction.amount || this.transaction.amount <= 0) {
                 this.amountError = 'El monto debe ser mayor a 0';
                 return false;
             }
             
-            // Add check for valid number
-            if (typeof this.transaction.amount !== 'number' || isNaN(this.transaction.amount)) {
-                this.amountError = 'El monto debe ser un número válido';
-                return false;
-            }
-            
-            // Check for maximum reasonable amount
-            if (this.transaction.amount > 1000000000000) { // 1 trillion
+            if (this.transaction.amount > 1000000000000) {
                 this.amountError = 'El monto es demasiado grande';
-                return false;
-            }
-            
-            // Ensure it's a whole number (no decimals)
-            if (!Number.isInteger(this.transaction.amount)) {
-                this.amountError = 'El monto debe ser un número entero';
-                return false;
-            }
-            
-            // Additional safety check for finite number
-            if (!Number.isFinite(this.transaction.amount)) {
-                this.amountError = 'El monto debe ser un número finito';
                 return false;
             }
             
@@ -294,14 +262,22 @@ window.AddTransactionComponent = {
             this.debugInfo = null;
         }
     },
-    mounted() {
-            if (!window.firebaseAuth) {
-        console.error('Firebase not initialized - redirecting to login');
-        window.location.href = "./index.html";
-        return;
-    }
-        window.setupAuthListener((user) => {
-            if (!user) window.location.href = "./index.html";
-        });
+    async mounted() {
+        try {
+            // Wait for auth to be ready
+            const user = await window.AuthManager.waitForAuth();
+            
+            if (!user) {
+                console.error('No authenticated user - redirecting to login');
+                window.location.href = "./index.html";
+                return;
+            }
+            
+            console.log('User authenticated:', user.email);
+            
+        } catch (error) {
+            console.error('Auth error:', error);
+            window.location.href = "./index.html";
+        }
     }
 };

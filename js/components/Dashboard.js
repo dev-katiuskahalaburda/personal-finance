@@ -79,27 +79,24 @@ window.DashboardComponent = {
         }
     },
     async mounted() {
-        // Add this check to all components
-        if (!window.firebaseAuth) {
-            console.error('Firebase not initialized - redirecting to login');
+        try {
+            // Wait for auth to be ready
+            const user = await window.AuthManager.waitForAuth();
+            
+            if (!user) {
+                console.error('No authenticated user - redirecting to login');
+                window.location.href = "./index.html";
+                return;
+            }
+            
+            console.log('User authenticated:', user.email);
+            await this.loadUserData();
+            this.isLoading = false;
+            
+        } catch (error) {
+            console.error('Auth error:', error);
             window.location.href = "./index.html";
-            return;
         }
-        
-        // Wait for auth to be ready
-        await new Promise((resolve) => {
-            window.setupAuthListener((user) => {
-                if (user) {
-                    resolve();
-                } else {
-                    window.location.href = "./index.html";
-                }
-            });
-        });
-        
-        console.log('Dashboard mounted - loading data...');
-        await this.loadUserData();
-        this.isLoading = false;
     },
     methods: {
         async loadUserData() {
