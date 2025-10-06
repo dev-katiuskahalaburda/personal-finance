@@ -72,12 +72,13 @@ window.SavingsDashboardComponent = {
                         
                         <div class="goal-header">
                             <h4>{{ goal.name }}</h4>
+                            
                             <div class="goal-actions">
-                                <button @click="startEditGoal(goal)" class="btn-edit" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
                                 <button @click="addContribution(goal)" class="btn-contribute" title="Añadir aporte">
                                     <i class="fas fa-plus-circle"></i>
+                                </button>
+                                <button @click="startEditGoal(goal)" class="btn-edit" title="Editar">
+                                    <i class="fas fa-edit"></i>
                                 </button>
                                 <button @click="confirmDeleteGoal(goal)" class="btn-delete" title="Eliminar">
                                     <i class="fas fa-trash"></i>
